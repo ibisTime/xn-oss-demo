@@ -892,7 +892,7 @@ function buildList(options) {
             reqApi({ code: options.deleteCode, json: data }).done(function(data) {
                 sucList();
             });
-        }, function(){});
+        }, function() {});
 
     });
 
@@ -2265,7 +2265,8 @@ function addEditTableListener1(addId, removeId, editId, tableId, columns, option
             var tableData = $(tableId).bootstrapTable('getData');
             if (code) {
                 for (var l = 0; l < tableData.length; l++) {
-                    if (tableData[l].code == code) {
+                    var _code = tableData[l].code || tableData[l].id;
+                    if (_code == code) {
                         break;
                     }
                 }
@@ -2293,7 +2294,7 @@ function addEditTableListener1(addId, removeId, editId, tableId, columns, option
         buildDetail1({
             fields: columns,
             detailCode: options.detailCode,
-            code: selRecords[0].code,
+            code: selRecords[0].code || selRecords[0].id,
             record: selRecords[0]
         });
     });
@@ -2309,10 +2310,10 @@ function addEditTableListener1(addId, removeId, editId, tableId, columns, option
         if (selRecords.length = 1) {
             confirm("确认删除该信息？").then(function() {
                 $(tableId).bootstrapTable('remove', {
-                    field: 'code',
-                    values: [selRecords[0].code]
+                    field: selRecords[0].code ? 'code' : 'id',
+                    values: [selRecords[0].code || selRecords[0].id]
                 });
-            }, function(){});
+            }, function() {});
         }
     });
 }
@@ -2406,6 +2407,8 @@ function buildDetail1(options) {
                 'display:none;' :
                 '') + '" class="form-title">' + item.title + '</div>';
         } else if (item.type == 'hidden') {
+            html = '<input type="hidden" id="' + item.field + '-model" name="' + item.field + '"/>' + html;
+        } else if (item.addeditType == 'hidden') {
             html = '<input type="hidden" id="' + item.field + '-model" name="' + item.field + '"/>' + html;
         } else if (item.readonly) {
             if (item.hidden1) {
@@ -3030,39 +3033,39 @@ function buildDetail1(options) {
 
 
 //图表
-function buildCharts(options){
-	
-	options = options || {};
-	
-	var searchs = JSON.parse(sessionStorage.getItem('listSearchs') || '{}')[location.pathname];
+function buildCharts(options) {
 
-	if (options.type != 'o2m') {
-		showPermissionControl();
-	}
+    options = options || {};
 
-	options.router = options.router || /.*\/([^\/]*)\.html/.exec(location.href)[1];
+    var searchs = JSON.parse(sessionStorage.getItem('listSearchs') || '{}')[location.pathname];
 
-	var html = '<ul>';
-	var optionsSearchs = options.searchs;
+    if (options.type != 'o2m') {
+        showPermissionControl();
+    }
+
+    options.router = options.router || /.*\/([^\/]*)\.html/.exec(location.href)[1];
+
+    var html = '<ul>';
+    var optionsSearchs = options.searchs;
     var dateTimeList = [];
     var dateTimeList1 = [];
-    
-	for (var i = 0, len = optionsSearchs.length; i < len; i++) {
-		var item = optionsSearchs[i];
-		if (item.twoDate) {
+
+    for (var i = 0, len = optionsSearchs.length; i < len; i++) {
+        var item = optionsSearchs[i];
+        if (item.twoDate) {
             dateTimeList.push(item);
             html += '<li  class="search-form-li" style="width: 50%;"><label>' + item.title1 + '</label><input id="' + item.field1 + '" name="' + item.field1 + '" class="lay-input lay-input1"/><label style="float:none;padding-left: 10px;">~</label><input id="' + item.field2 + '" name="' + item.field2 + '" class="lay-input lay-input1"/></li>';
             // 单个日期搜索框
         } else if (item.type == 'date' || item.type == "datetime") {
             dateTimeList1.push(item);
             html += '<li  class="search-form-li" style="width: 50%;"><label>' + item.title + '</label><input id="' + item.field + '" name="' + item.field + '" class="lay-input lay-input1"/></li>';
-        } 
-		
-	}
-	html += '<li class="search-form-li"><input id="searchBtn" type="button" class="btn" value="查询" /><input type="reset" class="btn" value="重置" /></li></ul>';
-	$('.search-form').append(html);
-	
-	// 两个日期搜索框
+        }
+
+    }
+    html += '<li class="search-form-li"><input id="searchBtn" type="button" class="btn" value="查询" /><input type="reset" class="btn" value="重置" /></li></ul>';
+    $('.search-form').append(html);
+
+    // 两个日期搜索框
     for (var i = 0, len = dateTimeList.length; i < len; i++) {
         (function(i) {
             var item = dateTimeList[i];
@@ -3102,264 +3105,264 @@ function buildCharts(options){
             });
         })(i);
     }
-	
-	
-	//初始化切换
-	$(".animsition").animsition({
-	    inClass               :   'fade-in-right',
-	    outClass              :   'fade-out',
-	    inDuration            :    1500,
-	    outDuration           :    800,
-	    linkElement           :   '.animsition-link',
-	    // e.g. linkElement   :   'a:not([target="_blank"]):not([href^=#])'
-	    loading               :    true,
-	    loadingParentElement  :   'body', //animsition wrapper element
-	    loadingClass          :   'animsition-loading',
-	    unSupportCss          : [ 'animation-duration',
-	                              '-webkit-animation-duration',
-	                              '-o-animation-duration'
-	                            ],
-	    //"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser.
-	    //The default setting is to disable the "animsition" in a browser that does not support "animation-duration".
-	    overlay               :   false,
-	    overlayClass          :   'animsition-overlay-slide',
-	    overlayParentElement  :   'body'
-	});
-	
-	// 基于准备好的dom，初始化echarts实例;
-	var myChart = echarts.init(document.getElementById('chart'),'macarons');
-	
-	getChart();
-	
-	$('#searchBtn').click(function() {
-		myChart.clear();
-		updateListSearch();
-		
-		getChart();
-	});
-	
-	
-	function getChart(){
-		var json = {};
-		var searchFormParams = $('.search-form').serializeObject();
-	
-		json.token = sessionStorage.getItem('token');
-		json.systemCode = sessionStorage.getItem('systemCode');
-		
-		$.extend(json, options.searchParams, searchFormParams);
-		
-		reqApi({
-			code: options.pageCode,
-			json: json,
-			sync: true,
-		}).done(function(data) {
-			
-			//请求数据
-			var data = data;
-			//配置参数
-			var settings = options.chart || "";
-			var xAxisDate = [],//x轴类目数据
-				series = [];//系列列表
-			
-			if(!data || !data.length){
-				$(".chartWrap").addClass('hidden');
-				$(".noneData").html('<p>暂无数据</p>')				
-				return ;
-			}else{
-				$(".chartWrap").removeClass('hidden');
-				$(".noneData").html('')		
-			}
-			
-			
-			var chartOption = {};
-			
-			if(options.type == 'pie'){
-				
-				var seriesDate = []//饼图数据
-				
-				$.each(settings.legendData, function(i, d) {
-					
-					var tmpl ={
-						value: settings.seriesDataType=='amount' ? moneyFormat(data[0][settings.seriesDataName[i]]) : data[0][settings.seriesDataName[i]],
-						name: d,
-					}
-					seriesDate.push(tmpl)
-				});
-				
-				series = [{
-		            type:'pie',// 饼图
-		            name: settings.title || "",// 系列名称
-		            center:['50%','50%'], //饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标
-		            radius: ['50%', '65%'], //饼图的半径，数组的第一项是内半径，第二项是外半径
-		            avoidLabelOverlap: false, //是否启用防止标签重叠策略
-		            label: {//饼图图形上的文本标签
-		                normal: {
-		                    show: false,
-		                    position: 'center',
-		                },
-		                emphasis: {
-		                    show: true,
-		                    textStyle: {
-		                        fontSize: '20',
-		                        fontWeight: 'bold'
-		                    }
-		                }
-		            },
-		            labelLine: {//标签的视觉引导线样式
-		                normal: {
-		                    show: false
-		                }
-		            },
-		            data:seriesDate
-		        }]
-				
-				
-				//饼图
-				chartOption={
-					title:{
-						text: settings.title || "",// 标题
-        				x:'center' // 标题x轴居中
-					},
-				    tooltip: { //触发类型
-				        trigger: 'item', //数据项图形触发 (饼图等无类目轴的图表)
-				    },
-				    
-				    toolbox: {//工具栏
-				        show : true,//是否显示工具栏
-				        feature : {//工具配置项
-				            mark : {show: !!settings.toolboxShow},
-				            dataView : {//数据视图工具
-				            	show:  !!settings.toolbox.featureDataView,
-				            	readOnly: false//是否不可编辑（只读）
-				            },
-				            restore : {//配置项还原
-				            	show:  !!settings.toolbox.featureRestore
-				            },
-			    			saveAsImage : {//保存为图片。
-			    				show:  !!settings.toolbox.featureSaveAsImage
-			    			}
-				        }
-				    },
-				    legend: {
-				    	orient: 'horizontal', // 图例列表的布局朝向
-				    	icon:'pie',
-				        x: 'right',
-				        y: 'bottom',
-				        selectedMode:true,
-				        data: settings.legendData||''
-				    },
-				    series: series
-				}
-				
-			}else{
-				// 默认加载用类目轴的图表
-				
-				//x轴类目数据
-				$.each(data, function(j, d) {
-					xAxisDate.push(dateFormat(d[settings.xAxisData],'yyyy-MM-dd'))
-				});
-				
-				//图表数据
-				$.each(settings.legendData, function(i, d){
-					var seriesDate = []//每个类的数据
-					$.each(data, function(j, d1) {
-						seriesDate.push(settings.seriesDataType=='amount' ? moneyFormat(d1[settings.seriesDataName[i]]) : d1[settings.seriesDataName[i]])
-					});
-					var tmpl = {
-			            name:d,
-			            type:settings.seriesType,
-			            barMaxWidth : 30,
-			            barMinHeight: 5,
-			            data:seriesDate,
-			            label: {
-			            	normal: {
-			            		show: true,
-                    			position: 'insideTop',
-			            		offset: [20, 0],
-			            		formatter: '{c}'+settings.seriesUnit+'\n',
-			            		textStyle:{
-			            			color:'#000'
-			            		}
-			            	},
-			            },
-	
-			        }
-					
-					series.push(tmpl)
-				})
-				
-				
-				chartOption = {
-				    title : {//图标名称
-				        text: settings.title || "",
-				    },
-				    tooltip: {//提示
-				        trigger: 'axis' //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表
-				    },
-				    legend: {//图例组件展现了不同系列的标记(symbol)，颜色和名字。可以通过点击图例控制哪些系列不显示
-				        data: settings.legendData||''
-				    },
-				    toolbox: {//工具栏
-				        show : true,//是否显示工具栏
-				        feature : {//工具配置项
-				            mark : {show: !!settings.toolboxShow},
-				            dataView : {//数据视图工具
-				            	show:  !!settings.toolbox.featureDataView,
-				            	readOnly: false//是否不可编辑（只读）
-				            },
-				            magicType : {//动态类型
-				            	show:  !!settings.toolbox.featureMagicType, 
-				            	type: ['line', 'bar', 'stack', 'tiled']//动态类型切换 启用的动态类型，包括'line'（切换为折线图）, 'bar'（切换为柱状图）, 'stack'（切换为堆叠模式）, 'tiled'（切换为平铺模式）
-				            },
-				            restore : {//配置项还原
-				            	show:  !!settings.toolbox.featureRestore
-				            },
-			    			saveAsImage : {//保存为图片。
-			    				show:  !!settings.toolbox.featureSaveAsImage
-			    			}
-				        }
-				    },
-				    dataZoom: [{//区域缩放
-				        type: 'inside',//内置型数据区域缩放组件（dataZoomInside）
-				        start: settings.dataZoomStart || 0,
-				        end:  settings.dataZoomEnd || 100,
-				    }, {//滑动条型数据区域缩放组件（dataZoomSlider）
-				        start: 0,
-				        end: 100,
-				        handleSize: '80%',
-				        handleStyle: {
-				            color: '#fff',
-				            shadowBlur: 3,
-				            shadowColor: 'rgba(0, 0, 0, 0.6)',
-				            shadowOffsetX: 2,
-				            shadowOffsetY: 2
-				        }
-				    }],
-				    grid: {
-				        left: '3%',
-				        right: '4%',
-				        containLabel: true
-				    },
-				    xAxis: {
-				        type: 'category',
-				        boundaryGap: false,
-				        data: xAxisDate,//类目数据，在类目轴（type: 'category'）中有效
-				    },
-				    yAxis: {
-				        type: 'value',
-				        axisLabel : {  
-	                        formatter: '{value} '+settings.seriesUnit,  
-	                    } 
-				    },
-				    series: series
-				};
-			}
-			
-			
-			myChart.setOption(chartOption);
-		});
-	}
-	
+
+
+    //初始化切换
+    $(".animsition").animsition({
+        inClass: 'fade-in-right',
+        outClass: 'fade-out',
+        inDuration: 1500,
+        outDuration: 800,
+        linkElement: '.animsition-link',
+        // e.g. linkElement   :   'a:not([target="_blank"]):not([href^=#])'
+        loading: true,
+        loadingParentElement: 'body', //animsition wrapper element
+        loadingClass: 'animsition-loading',
+        unSupportCss: ['animation-duration',
+            '-webkit-animation-duration',
+            '-o-animation-duration'
+        ],
+        //"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser.
+        //The default setting is to disable the "animsition" in a browser that does not support "animation-duration".
+        overlay: false,
+        overlayClass: 'animsition-overlay-slide',
+        overlayParentElement: 'body'
+    });
+
+    // 基于准备好的dom，初始化echarts实例;
+    var myChart = echarts.init(document.getElementById('chart'), 'macarons');
+
+    getChart();
+
+    $('#searchBtn').click(function() {
+        myChart.clear();
+        updateListSearch();
+
+        getChart();
+    });
+
+
+    function getChart() {
+        var json = {};
+        var searchFormParams = $('.search-form').serializeObject();
+
+        json.token = sessionStorage.getItem('token');
+        json.systemCode = sessionStorage.getItem('systemCode');
+
+        $.extend(json, options.searchParams, searchFormParams);
+
+        reqApi({
+            code: options.pageCode,
+            json: json,
+            sync: true,
+        }).done(function(data) {
+
+            //请求数据
+            var data = data;
+            //配置参数
+            var settings = options.chart || "";
+            var xAxisDate = [], //x轴类目数据
+                series = []; //系列列表
+
+            if (!data || !data.length) {
+                $(".chartWrap").addClass('hidden');
+                $(".noneData").html('<p>暂无数据</p>')
+                return;
+            } else {
+                $(".chartWrap").removeClass('hidden');
+                $(".noneData").html('')
+            }
+
+
+            var chartOption = {};
+
+            if (options.type == 'pie') {
+
+                var seriesDate = [] //饼图数据
+
+                $.each(settings.legendData, function(i, d) {
+
+                    var tmpl = {
+                        value: settings.seriesDataType == 'amount' ? moneyFormat(data[0][settings.seriesDataName[i]]) : data[0][settings.seriesDataName[i]],
+                        name: d,
+                    }
+                    seriesDate.push(tmpl)
+                });
+
+                series = [{
+                    type: 'pie', // 饼图
+                    name: settings.title || "", // 系列名称
+                    center: ['50%', '50%'], //饼图的中心（圆心）坐标，数组的第一项是横坐标，第二项是纵坐标
+                    radius: ['50%', '65%'], //饼图的半径，数组的第一项是内半径，第二项是外半径
+                    avoidLabelOverlap: false, //是否启用防止标签重叠策略
+                    label: { //饼图图形上的文本标签
+                        normal: {
+                            show: false,
+                            position: 'center',
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    labelLine: { //标签的视觉引导线样式
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: seriesDate
+                }]
+
+
+                //饼图
+                chartOption = {
+                    title: {
+                        text: settings.title || "", // 标题
+                        x: 'center' // 标题x轴居中
+                    },
+                    tooltip: { //触发类型
+                        trigger: 'item', //数据项图形触发 (饼图等无类目轴的图表)
+                    },
+
+                    toolbox: { //工具栏
+                        show: true, //是否显示工具栏
+                        feature: { //工具配置项
+                            mark: { show: !!settings.toolboxShow },
+                            dataView: { //数据视图工具
+                                show: !!settings.toolbox.featureDataView,
+                                readOnly: false //是否不可编辑（只读）
+                            },
+                            restore: { //配置项还原
+                                show: !!settings.toolbox.featureRestore
+                            },
+                            saveAsImage: { //保存为图片。
+                                show: !!settings.toolbox.featureSaveAsImage
+                            }
+                        }
+                    },
+                    legend: {
+                        orient: 'horizontal', // 图例列表的布局朝向
+                        icon: 'pie',
+                        x: 'right',
+                        y: 'bottom',
+                        selectedMode: true,
+                        data: settings.legendData || ''
+                    },
+                    series: series
+                }
+
+            } else {
+                // 默认加载用类目轴的图表
+
+                //x轴类目数据
+                $.each(data, function(j, d) {
+                    xAxisDate.push(dateFormat(d[settings.xAxisData], 'yyyy-MM-dd'))
+                });
+
+                //图表数据
+                $.each(settings.legendData, function(i, d) {
+                    var seriesDate = [] //每个类的数据
+                    $.each(data, function(j, d1) {
+                        seriesDate.push(settings.seriesDataType == 'amount' ? moneyFormat(d1[settings.seriesDataName[i]]) : d1[settings.seriesDataName[i]])
+                    });
+                    var tmpl = {
+                        name: d,
+                        type: settings.seriesType,
+                        barMaxWidth: 30,
+                        barMinHeight: 5,
+                        data: seriesDate,
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'insideTop',
+                                offset: [20, 0],
+                                formatter: '{c}' + settings.seriesUnit + '\n',
+                                textStyle: {
+                                    color: '#000'
+                                }
+                            },
+                        },
+
+                    }
+
+                    series.push(tmpl)
+                })
+
+
+                chartOption = {
+                    title: { //图标名称
+                        text: settings.title || "",
+                    },
+                    tooltip: { //提示
+                        trigger: 'axis' //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表
+                    },
+                    legend: { //图例组件展现了不同系列的标记(symbol)，颜色和名字。可以通过点击图例控制哪些系列不显示
+                        data: settings.legendData || ''
+                    },
+                    toolbox: { //工具栏
+                        show: true, //是否显示工具栏
+                        feature: { //工具配置项
+                            mark: { show: !!settings.toolboxShow },
+                            dataView: { //数据视图工具
+                                show: !!settings.toolbox.featureDataView,
+                                readOnly: false //是否不可编辑（只读）
+                            },
+                            magicType: { //动态类型
+                                show: !!settings.toolbox.featureMagicType,
+                                type: ['line', 'bar', 'stack', 'tiled'] //动态类型切换 启用的动态类型，包括'line'（切换为折线图）, 'bar'（切换为柱状图）, 'stack'（切换为堆叠模式）, 'tiled'（切换为平铺模式）
+                            },
+                            restore: { //配置项还原
+                                show: !!settings.toolbox.featureRestore
+                            },
+                            saveAsImage: { //保存为图片。
+                                show: !!settings.toolbox.featureSaveAsImage
+                            }
+                        }
+                    },
+                    dataZoom: [{ //区域缩放
+                        type: 'inside', //内置型数据区域缩放组件（dataZoomInside）
+                        start: settings.dataZoomStart || 0,
+                        end: settings.dataZoomEnd || 100,
+                    }, { //滑动条型数据区域缩放组件（dataZoomSlider）
+                        start: 0,
+                        end: 100,
+                        handleSize: '80%',
+                        handleStyle: {
+                            color: '#fff',
+                            shadowBlur: 3,
+                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                            shadowOffsetX: 2,
+                            shadowOffsetY: 2
+                        }
+                    }],
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: xAxisDate, //类目数据，在类目轴（type: 'category'）中有效
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value} ' + settings.seriesUnit,
+                        }
+                    },
+                    series: series
+                };
+            }
+
+
+            myChart.setOption(chartOption);
+        });
+    }
+
 }
 
 function chosen1() {
@@ -3380,7 +3383,7 @@ function confirm(msg, okText, cancelText) {
                 return true;
             },
             cancel: function() {
-            	reject();
+                reject();
                 return true;
             },
             cancelValue: cancelText || '取消',
