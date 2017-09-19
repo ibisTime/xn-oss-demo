@@ -485,6 +485,10 @@ textarea {
 .form-info li {
 	margin-bottom: 13px;
 	clear: both;
+	padding-right: 20px;
+}
+.ui-dialog .form-info li{
+	text-align: center;
 }
 
 .form-info input[type=checkbox]+input[type=checkbox] {
@@ -834,6 +838,9 @@ td {
 	margin-left: 0px;
 }
 
+#jsForm .form-body {
+	min-width: 600px;
+}
 #jsForm .form-body li .bootstrap-table {
 	margin-left: 0px;
 }
@@ -980,6 +987,9 @@ input[type=file] {
 
 .pop-form .form-info .btn {
 	margin-left: 10px;
+}
+.pop-form .form-info .btn:first-child{
+	margin-left: 40px;
 }
 
 .pop-form .form-body {
@@ -1252,4 +1262,7 @@ svg circle:hover {
 
 #pic{
 	overflow: hidden;
+}
+.search-form-li-date{
+	min-width: 455px !important;
 }

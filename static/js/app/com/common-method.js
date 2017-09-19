@@ -669,7 +669,7 @@ function buildList(options) {
                 // 两个日期搜索框
             } else if (item.twoDate) {
                 dateTimeList.push(item);
-                html += '<li  class="search-form-li" style="width: 50%;"><label>' + item.title1 + '</label><input id="' + item.field1 + '" name="' + item.field1 + '" class="lay-input lay-input1"/><label style="float:none;padding-left: 10px;">~</label><input id="' + item.field2 + '" name="' + item.field2 + '" class="lay-input lay-input1"/></li>';
+                html += '<li  class="search-form-li search-form-li-date" style="width: 50%;"><label>' + item.title1 + '</label><input id="' + item.field1 + '" name="' + item.field1 + '" class="lay-input lay-input1"/><label style="float:none;padding-left: 10px;">~</label><input id="' + item.field2 + '" name="' + item.field2 + '" class="lay-input lay-input1"/></li>';
                 // 单个日期搜索框
             } else if (item.type == 'date' || item.type == "datetime") {
                 dateTimeList1.push(item);
