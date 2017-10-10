@@ -490,7 +490,6 @@ textarea {
 .ui-dialog .form-info li{
 	text-align: center;
 }
-
 .form-info input[type=checkbox]+input[type=checkbox] {
 	margin-left: 20px;
 }
