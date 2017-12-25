@@ -47,7 +47,6 @@ $(function() {
         title: '备注',
         field: "remark",
         maxlength: 255
-
     }];
 
 

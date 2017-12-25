@@ -1,39 +1,37 @@
 $(function() {
 
     var columns = [{
-            field: '',
-            title: '',
-            checkbox: true
-        }, {
-            field: 'smsTitle',
-            title: '标题',
-        }, {
-            field: 'toKind',
-            title: '针对人群',
-            type: 'select',
-            key: 'user_kind',
-            formatter: Dict.getNameForList('user_kind'),
-            search: true
-        },{
-            field: 'status',
-            title: '状态',
-            type: 'select',
-            formatter: Dict.getNameForList('notice_status'),
-            search: true,
-            key: 'notice_status'
-        },
-        {
-            field: 'updater',
-            title: '最近修改人'
-        }, {
-            field: 'updateDatetime',
-            title: '最近修改时间',
-            formatter: dateTimeFormat
-        }, {
-            field: 'remark',
-            title: '备注'
-        }
-    ];
+        field: '',
+        title: '',
+        checkbox: true
+    }, {
+        field: 'smsTitle',
+        title: '标题',
+    }, {
+        field: 'toKind',
+        title: '针对人群',
+        type: 'select',
+        key: 'user_kind',
+        formatter: Dict.getNameForList('user_kind'),
+        search: true
+    }, {
+        field: 'status',
+        title: '状态',
+        type: 'select',
+        formatter: Dict.getNameForList('notice_status'),
+        search: true,
+        key: 'notice_status'
+    }, {
+        field: 'updater',
+        title: '最近修改人'
+    }, {
+        field: 'updateDatetime',
+        title: '最近修改时间',
+        formatter: dateTimeFormat
+    }, {
+        field: 'remark',
+        title: '备注'
+    }];
 
 
     buildList({
@@ -59,8 +57,7 @@ $(function() {
                 code: '804036',
                 json: { 'id': selRecords[0].id }
             }).then(function() {
-                toastr.info("操作成功");
-                $('#tableList').bootstrapTable('refresh', { url: $('#tableList').bootstrapTable('getOptions').url });
+                sucList();
             });
         }, function(){});
     });

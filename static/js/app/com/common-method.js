@@ -969,7 +969,10 @@ function buildList(options) {
     if (options.tableId) {
         tableEl = $('#' + options.tableId);
     }
-
+    tableEl.on('load-success.bs.table', function () {
+        updateTableInfo('tableList');
+    });
+    var tableInfo = JSON.parse(sessionStorage.getItem('tableInfo') || '{}')[location.pathname] || {};
     //表格初始化
     tableEl.bootstrapTable({
         method: "post",
@@ -1018,8 +1021,8 @@ function buildList(options) {
         pagination: true,
         sidePagination: 'server',
         totalRows: 0,
-        pageNumber: 1,
-        pageSize: options.pageSize || 10,
+        pageNumber: tableInfo.pageNumber || 1,
+        pageSize: tableInfo.pageSize || options.pageSize || 10,
         pageList: options.pageList || [10, 20, 30, 40, 50],
         columns: options.columns
     });
@@ -2194,7 +2197,8 @@ function sleep(ms) {
 
 function sucList() {
     toastr.success('操作成功');
-    $('#tableList').bootstrapTable('refresh', { url: $('#tableList').bootstrapTable('getOptions').url });
+    var option = $('#tableList').bootstrapTable('getOptions');
+    $('#tableList').bootstrapTable('refreshOptions', { pageNumber: option.pageNumber, pageSize: option.pageSize });
 }
 
 function sucDetail() {
@@ -3349,6 +3353,43 @@ function chosen1() {
     $('select', $("#model-form")).chosen && $('select', $("#model-form")).not('.norender').chosen();
 }
 
+//计算密码强度
+function calculateSecurityLevel(password) {
+    var strength_L = 0;
+    var strength_M = 0;
+    var strength_H = 0;
+
+    for (var i = 0; i < password.length; i++) {
+        var code = password.charCodeAt(i);
+        // 数字
+        if (code >= 48 && code <= 57) {
+            strength_L++;
+        // 小写字母 大写字母
+        } else if ((code >= 65 && code <= 90) ||
+          (code >= 97 && code <= 122)) {
+          strength_M++;
+        // 特殊符号
+        } else if ((code >= 32 && code <= 47) ||
+          (code >= 58 && code <= 64) ||
+          (code >= 94 && code <= 96) ||
+          (code >= 123 && code <= 126)) {
+            strength_H++;
+        }
+    }
+    // 弱
+    if ((strength_L == 0 && strength_M == 0) ||
+        (strength_L == 0 && strength_H == 0) ||
+        (strength_M == 0 && strength_H == 0)) {
+        return "1";
+    }
+    // 强
+    if (0 != strength_L && 0 != strength_M && 0 != strength_H) {
+        return "3";
+    }
+    // 中
+    return "2";
+}
+
 function confirm(msg, okText, cancelText) {
     return (new Promise(function(resolve, reject) {
         var d = dialog({
@@ -3675,4 +3716,13 @@ function updateListSearch() {
     var params = $('.search-form').serializeObject();
     searchs[pathName] = params;
     sessionStorage.setItem('listSearchs', JSON.stringify(searchs));
+}
+
+function updateTableInfo(id) {
+    var searchs = JSON.parse(sessionStorage.getItem('tableInfo') || '{}');
+    var pathName = location.pathname;
+    var option = $('#' + id).bootstrapTable('getOptions');
+    var params = { pageNumber: option.pageNumber, pageSize: option.pageSize };
+    searchs[pathName] = params;
+    sessionStorage.setItem('tableInfo', JSON.stringify(searchs));
 }

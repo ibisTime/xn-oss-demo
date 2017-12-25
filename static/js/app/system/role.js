@@ -11,10 +11,10 @@ $(function(){
 	}, {
 		field: 'level',
 		title: '角色等级',
-        formatter: Dict.getNameForList('role_level'),
-        search: true,
-        type: 'select',
-        key: 'role_level'
+    formatter: Dict.getNameForList('role_level'),
+    search: true,
+    type: 'select',
+    key: 'role_level'
 	}, {
 		field: 'updater',
 		title: '更新人'
@@ -22,10 +22,10 @@ $(function(){
 		field : 'updateDatetime',
 		title : '更新时间',
 		formatter: dateTimeFormat
-    }, {
-    	field: 'remark',
-    	title: '备注'
-    }];
+  }, {
+  	field: 'remark',
+  	title: '备注'
+  }];
 	buildList({
 		//router: 'role',
 		columns: columns,
@@ -39,6 +39,6 @@ $(function(){
 			toastr.info("请选择记录");
 			return;
 		}
-      	window.location.href = "role_menu.html?code="+selRecords[0].code+"&name="+encodeURI(encodeURI(selRecords[0].name));
+  	window.location.href = "role_menu.html?code="+selRecords[0].code+"&name="+encodeURI(encodeURI(selRecords[0].name));
 	});
 })

@@ -22,7 +22,7 @@ $(function() {
 		required: true,
 		pageCode: '805020',
 		keyName: 'code',
-		valueName: 'name',
+		valueName: 'name'
 	}, {
 		title: '备注',
 		field: 'remark',

@@ -19,10 +19,10 @@ $(function() {
 		required: true,
 		maxlength: 20
 	},{
-        title: '数值',
-        field: 'cvalue',
-        required: true,
-        maxlength: 255
+    title: '数值',
+    field: 'cvalue',
+    required: true,
+    maxlength: 255
 	}];
 	
 	buildDetail({

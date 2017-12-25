@@ -25,9 +25,9 @@ $(function(){
 		valueName: 'name',
 		search: true
 	}, {
-    	field: 'remark',
-    	title: '备注'
-    }];
+  	field: 'remark',
+  	title: '备注'
+  }];
 	buildList({
 		router: 'user',
 		columns: columns,
@@ -69,9 +69,8 @@ $(function(){
 			return;
 		}
 		
-		
 		confirm("确定激活？").then(function() {
-	    	reqApi({
+    	reqApi({
 				code: '805091',
 				json: {
 					userId: selRecords[0].userId,
@@ -81,7 +80,6 @@ $(function(){
 			}).then(function() {
 				sucList();
 			});
-		
 		},function() {})
 	});
 	

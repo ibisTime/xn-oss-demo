@@ -10,7 +10,7 @@ $(function() {
 	},{
 		title: '规则名称',
 		field: 'remark',
-        readonly: true,
+    readonly: true,
 		required: true,
 		maxlength: 250
 	},{
@@ -20,10 +20,10 @@ $(function() {
 		required: true,
 		maxlength: 20
 	},{
-        title: '数值',
-        field: 'cvalue',
-        required: true,
-        maxlength: 255
+    title: '数值',
+    field: 'cvalue',
+    required: true,
+    maxlength: 255
 	}];
 	
 	buildDetail({

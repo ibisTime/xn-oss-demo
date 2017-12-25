@@ -18,12 +18,12 @@ $(function() {
 		title: '新密码',
 		field: 'loginPwd',
 		type: 'password',
-		required: true,
+		required: true
 	}, {
 		title: '管理员密码',
 		field: 'adminPwd',
 		type: 'password',
-		required: true,
+		required: true
 	}];
 	
 	buildDetail({

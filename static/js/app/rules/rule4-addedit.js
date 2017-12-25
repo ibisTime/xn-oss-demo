@@ -10,19 +10,19 @@ $(function() {
 	},{
 		title: '规则名称',
 		field: 'remark',
-        readonly: true,
+    readonly: true,
 		maxlength: 250
 	},{
 		title : '参数',
 		field : 'ckey',
-        readonly: true,
+    readonly: true,
 		required: true,
 		maxlength: 20
 	},{
-        title: '数值',
-        field: 'cvalue',
-        required: true,
-        maxlength: 255
+    title: '数值',
+    field: 'cvalue',
+    required: true,
+    maxlength: 255
 	}];
 	
 	buildDetail({

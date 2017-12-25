@@ -146,9 +146,7 @@ $(function() {
                                 code: '802701',
                                 json: data
                             }).done(function(data) {
-                                toastr.info("操作成功");
-
-                                $('#tableList').bootstrapTable('refresh', { url: $('#tableList').bootstrapTable('getOptions').url });
+                                sucList();
                                 dw.close().remove();
                             });
                         }
@@ -168,8 +166,7 @@ $(function() {
                                 code: '802701',
                                 json: data
                             }).done(function(data) {
-                                toastr.info("操作成功");
-                                $('#tableList').bootstrapTable('refresh', { url: $('#tableList').bootstrapTable('getOptions').url });
+                                sucList();
                                 dw.close().remove();
                             });
                         }

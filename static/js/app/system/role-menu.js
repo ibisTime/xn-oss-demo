@@ -27,22 +27,18 @@ $(function() {
 			checkbox: true,
 			isExpand: true,
 			idFieldName: 'code',
-	        parentIDFieldName: 'parentCode',
-	        textFieldName: 'name'
+      parentIDFieldName: 'parentCode',
+      textFieldName: 'name'
 		});
-		
 	});
-	
-	
-	
 	
 	$("#subBtn").click(function() {
 		var menuList = new Array();
-	    var menuData = $("#treeMenu").ligerGetTreeManager().getChecked();
+    var menuData = $("#treeMenu").ligerGetTreeManager().getChecked();
 		for (var i = 0; i < menuData.length; i++){
 			menuList[i] = menuData[i]['data']['code'];
 		}
-    	var data = {roleCode:$("#code").val(),menuCodeList:menuList, updater: getUserName()};
+  	var data = {roleCode:$("#code").val(),menuCodeList:menuList, updater: getUserName()};
 		reqApi({
 			code: '805027',
 			json: data
