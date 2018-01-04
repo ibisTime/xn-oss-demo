@@ -1,0 +1,2 @@
+export const SYSTEM_CODE = 'CD-COIN000017';
+export const COMPANY_CODE = 'CD-COIN000017';
