@@ -1,4 +1,6 @@
 import cookies from 'browser-cookies';
+import { message, Modal } from 'antd';
+import { PIC_PREFIX } from './config';
 
 /**
  * 保存用户登录信息
@@ -40,12 +42,24 @@ export function getRoleCode() {
  * @returns
  */
 export function getQueryString(name, search) {
-    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-    var r = search.substr(1).match(reg);
-    if (r != null) {
-        return decodeURIComponent(r[2]);
-    }
-    return null;
+  search = search || window.location.search;
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+  var r = search.substr(1).match(reg);
+  if (r != null) {
+      return decodeURIComponent(r[2]);
+  }
+  return null;
+}
+
+/**
+ * 获取正确的url，使其以'/'开头
+ * @param url
+ */
+export function getRealUrl(url) {
+  if (url && url !== '#') {
+    url = /^\//.test(url) ? url : '/' + url;
+  }
+  return url;
 }
 
 /**
@@ -77,6 +91,10 @@ export function formatDate(date, fmt = "yyyy-MM-dd") {
   return fmt;
 }
 
+/**
+ * 获取两位格式化数字
+ * @param str
+ */
 function padLeftZero(str) {
   return ('00' + str).substr(str.length);
 }
@@ -129,4 +147,65 @@ export function moneyFormat(money, format) {
     money = "-" + money;
   }
   return money;
+}
+
+/**
+ * 格式化图片地址
+ * @param imgs
+ * @param suffix
+ */
+export function formatImg(imgs, suffix = '?imageMogr2/auto-orient') {
+  if(!imgs) {
+    return '';
+  }
+  let img = imgs.split(/\|\|/)[0];
+  if (!/^http|^data:image/i.test(img)) {
+    let index = img.indexOf('?imageMogr2');
+    if (index !== -1) {
+      suffix = img.substr(index);
+      img = img.substr(0, index);
+    }
+    img = PIC_PREFIX + encodeURIComponent(img) + suffix;
+  }
+  return img;
+}
+
+export function isUndefined(value) {
+  return value === undefined || value === null;
+}
+
+export function showMsg(msg, type = 'success', time = 2) {
+  message[type](msg, time);
+}
+
+export function showWarnMsg(msg, time = 2) {
+  showMsg(msg, 'warning', time);
+}
+
+export function showSucMsg(msg, time = 2) {
+  showMsg(msg, 'success', time);
+}
+
+export function showErrMsg(msg, time = 2) {
+  showMsg(msg, 'success', time);
+}
+
+export function showConfirm({ okType = 'primary', onOk, onCancel }) {
+  Modal.confirm({
+    okType,
+    title: '您确定要删除该条记录吗?',
+    content: '删除记录后无法还原',
+    okText: '确定',
+    cancelText: '取消',
+    onOk() {
+      onOk && onOk();
+    },
+    onCancel() {
+      onCancel && onCancel();
+    }
+  });
+}
+
+export function showDelConfirm({ onOk, onCancel }) {
+  showConfirm({ okType: 'danger', onOk, onCancel })
 }

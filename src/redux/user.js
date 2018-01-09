@@ -1,7 +1,6 @@
 import fetch from 'common/js/fetch';
 import { setUser, getUserId, setRoleInfo } from 'common/js/util';
 
-const ERROR_MSG = 'ERROR_MSG';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGOUT = 'LOGOUT';
 const LOAD_DATA = 'LOAD_DATA';
@@ -26,8 +25,6 @@ export function user (state = initState, action) {
       return {...state, ...action.payload, redirectTo: '/'};
     case LOGOUT:
       return {...initState, redirectTo: '/login'};
-    case ERROR_MSG:
-      return {...state, msg: action.msg};
     case LOADING:
       return {...state, fetching: true};
     case CANCEL_LOADING:
@@ -42,11 +39,7 @@ function loginSuccess (data) {
   return { type: LOGIN_SUCCESS, payload: data };
 }
 
-function errorMsg (msg) {
-  return { msg, type: ERROR_MSG };
-}
-
-function fetching() {
+function doFetching() {
   return { type: LOADING };
 }
 
@@ -63,14 +56,12 @@ export function loadData(data) {
 // 获取用户信息
 export function getUser() {
   return dispatch => {
-    dispatch(fetching());
+    dispatch(doFetching());
     _getUser().then(data => {
       dispatch(cancelFetching());
       dispatch(loadData(data));
     }).catch(msg => {
       dispatch(cancelFetching());
-      msg = typeof msg === 'string' ? msg : '网络异常，请重新操作!';
-      dispatch(errorMsg(msg));
     });
   }
 }
@@ -78,7 +69,7 @@ export function getUser() {
 // 登录
 export function login({ loginName, loginPwd }) {
   return dispatch => {
-    dispatch(fetching());
+    dispatch(doFetching());
     fetch(805050, {
       loginName,
       loginPwd,
@@ -93,8 +84,6 @@ export function login({ loginName, loginPwd }) {
       });
     }).catch(msg => {
       dispatch(cancelFetching());
-      msg = typeof msg === 'string' ? msg : '网络异常，请重新操作!';
-      dispatch(errorMsg(msg));
     });
   }
 }

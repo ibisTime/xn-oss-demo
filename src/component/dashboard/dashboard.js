@@ -10,14 +10,13 @@ import {
   clearSubOpenCode,
   restoreSubOpenCode
 } from '@redux/menu';
-import ROUTES from './route';
 import asyncComponent from '../async-component/async-component';
+import ROUTES from 'src/route';
 import './dashboard.css';
 import logo from './logo.svg';
 
 const { SubMenu, Item } = Menu;
 const { Header, Content, Sider } = Layout;
-
 const Home = asyncComponent(() => import('../../container/home/home'));
 
 @connect(
@@ -55,13 +54,14 @@ class Dashboard extends Component {
   }
   handleSubMenuClick(e) {
     this.props.setSubMenuCode(e.key);
-    this.props.history.push(this.props.menus[e.key].url.split('.')[0]);
+    let url = this.props.menus[e.key].url.split('.')[0];
+    this.props.history.push(url);
   }
   handleTitleClick(e) {
     this.props.setSubOpenCode(e.key);
   }
   getRoutes() {
-    return ROUTES.map(v => <Route key={v.path} path={v.path} component={v.component}></Route>);
+    return ROUTES.map(v => <Route key={v.path} exact path={v.path} component={v.component}></Route>);
   }
   getBreadcrumb() {
     if (!this.props.topMenuCode || !this.props.subMenuCode) {

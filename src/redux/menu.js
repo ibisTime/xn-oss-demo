@@ -1,7 +1,8 @@
-import fetch from 'common/js/fetch';
-import { getRoleCode } from 'common/js/util';
+import { getRoleMenuList } from 'api/menu';
+import { getRealUrl } from 'common/js/util';
 
-const ROOT_CODE = 'COINSM201700000000000000';
+// const ROOT_CODE = 'COINSM201700000000000000';
+const ROOT_CODE = 'YLQSM201600000000000000';
 
 const SET_TOP_MENU_CODE = 'SET_TOP_MENU_CODE';
 const SET_SUB_MENU_CODE = 'SET_SUB_MENU_CODE';
@@ -9,7 +10,6 @@ const SET_SUB_OPEN_CODE = 'SET_SUB_OPEN_CODE';
 const CLEAR_SUB_OPEN_CODE = 'CLEAR_SUB_OPEN_CODE';
 const RESTORE_SUB_OPEN_CODE = 'RESTORE_SUB_OPEN_CODE';
 const SET_MENU_LIST = 'SET_MENU_LIST';
-const ERROR_MSG = 'ERROR_MSG';
 
 let preSubOpenCode = [];
 
@@ -39,8 +39,6 @@ export function menu(state = initState, action) {
       return {...state, subOpenCode: action.payload};
     case SET_MENU_LIST:
       return {...state, ..._getMenuState(action.payload)};
-    case ERROR_MSG:
-      return {...state, msg: action.msg};
     default:
       return state;
   }
@@ -69,10 +67,6 @@ export function restoreSubOpenCode() {
   return { type: RESTORE_SUB_OPEN_CODE, payload: preSubOpenCode };
 }
 
-function errorMsg (msg) {
-  return { msg, type: ERROR_MSG };
-}
-
 function setMenuList(data) {
   return { type: SET_MENU_LIST, payload: data };
 }
@@ -80,16 +74,9 @@ function setMenuList(data) {
 // 获取菜单列表
 export function getMenuList(pathname) {
   return dispatch => {
-    fetch(805026, {
-      type: 1,
-      parentCode: '',
-      roleCode: getRoleCode()
-    }).then(data => {
+    getRoleMenuList().then(data => {
       dispatch(setMenuList({ data, pathname }));
-    }).catch(msg => {
-      msg = typeof msg === 'string' ? msg : '网络异常，请重新操作!';
-      dispatch(errorMsg(msg));
-    });
+    }).catch(() => {});
   }
 }
 
@@ -125,14 +112,6 @@ function _getMenuState({ data, pathname }) {
     } else {
       result.redirectTo = '/';
     }
-  } else {
-    result = {
-      ...result,
-      subMenuList: [],
-      subMenuCode: '',
-      subOpenCode: [],
-      topMenuCode: ''
-    };
   }
   return result;
 }
@@ -155,6 +134,7 @@ function getFilterList(result, data) {
 
 function createMenus(newList, result) {
   newList.forEach(v => {
+    v.url = getRealUrl(v.url);
     let pCode = v.parentCode;
     if (result.top2SubObj[pCode]) {
       if (!result.top2SubObj[pCode].find(i => i.code === v.code)) {

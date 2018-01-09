@@ -6,12 +6,12 @@ import {
   setSelectData,
   setPageData,
   restore
-} from '@redux/security/menu-addedit';
+} from '@redux/security/role-addedit';
 import { getQueryString } from 'common/js/util';
 import { DetailWrapper } from 'common/js/build-detail';
 
 @DetailWrapper(
-  state => state.securityMenuAddEdit,
+  state => state.securityRoleAddEdit,
   { initStates, doFetching, cancelFetching, setSelectData, setPageData, restore }
 )
 class MenuAddEdit extends React.Component {
@@ -22,51 +22,31 @@ class MenuAddEdit extends React.Component {
   }
   render() {
     const fields = [{
-      title: '父菜单编号',
-      field: 'parentCode',
-      required: true,
-      type: 'select',
-      listCode: '805001',
-      params: { type: 1 },
-      keyName: 'code',
-      valueName: ['code', 'name']
-    }, {
-      title: '菜单名称',
+      title: '角色名称',
       field: 'name',
       required: true
     }, {
-      title: '菜单地址',
-      field: 'url',
-      required: true
-    }, {
-      title: '类型',
-      field: 'type',
+      title: '角色等级',
+      field: 'level',
       required: true,
       type: 'select',
-      data: [{
-        dkey: '1',
-        dvalue: '菜单'
-      }, {
-        dkey: '2',
-        dvalue: '按钮'
-      }],
+      key: 'role_level',
       keyName: 'dkey',
       valueName: 'dvalue'
-    }, {
-      title: '菜单顺序号',
-      field: 'orderNo',
-      required: true
     }, {
       title: '备注',
       field: 'remark'
     }];
     return this.props.buildDetail({
       fields,
+      beforeDetail: (param) => {
+        param.kind = 1;
+      },
       code: this.code,
       view: this.view,
-      detailCode: 805002,
-  		addCode: 805003,
-  		editCode: 805005
+      detailCode: 805022,
+  		addCode: 805023,
+  		editCode: 805025
     });
   }
 }

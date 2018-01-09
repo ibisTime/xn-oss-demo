@@ -1,5 +1,14 @@
 import React from 'react';
-import { getInitData, getPageTableData, clearSearchParam } from '@redux/security.menu';
+import {
+  setTableData,
+  setPagination,
+  setBtnList,
+  setSearchParam,
+  clearSearchParam,
+  doFetching,
+  cancelFetching,
+  setSearchData
+} from '@redux/security/menu';
 import { listWrapper } from 'common/js/build-list';
 
 @listWrapper(
@@ -7,12 +16,10 @@ import { listWrapper } from 'common/js/build-list';
     ...state.securityMenu,
     parentCode: state.menu.subMenuCode
   }),
-  { getInitData, getPageTableData, clearSearchParam }
+  { setTableData, clearSearchParam, doFetching, setBtnList,
+    cancelFetching, setPagination, setSearchParam, setSearchData }
 )
 class Menu extends React.Component {
-  componentDidMount() {
-    this.props.getInitData(this.props.parentCode);
-  }
   render() {
     const fields = [{
       title: '菜单名称',
@@ -24,30 +31,23 @@ class Menu extends React.Component {
     }, {
       title: '父菜单编号',
       field: 'parentCode',
-      formatter: (parentCode) => {
-        if (parentCode && this.props.searchData['parentCode']) {
-          let item = this.props.searchData['parentCode'].find(v => v.code === parentCode);
-          return item ? `${parentCode} ${item.name}` : '';
-        }
-        return '';
-      },
       type: 'select',
-      data: this.props.searchData['parentCode'],
+      listCode: '805001',
+      params: { type: 1 },
       keyName: 'code',
       valueName: ['code', 'name'],
       search: true
     }, {
       title: '类型',
       field: 'type',
-      formatter: (type) => {
-        if (this.props.searchData['type']) {
-          let item = this.props.searchData['type'].find(v => v.dkey === type);
-          return item ? item.dvalue : '';
-        }
-        return '';
-      },
       type: 'select',
-      data: this.props.searchData['type'],
+      data: [{
+        dkey: '1',
+        dvalue: '菜单'
+      }, {
+        dkey: '2',
+        dvalue: '按钮'
+      }],
       keyName: 'dkey',
       valueName: 'dvalue',
       search: true
@@ -58,12 +58,7 @@ class Menu extends React.Component {
       title: '备注',
       field: 'remark'
     }];
-    const btnEvent = {
-      delete: () => {
-        console.log('delete');
-      }
-    };
-    return this.props.buildList({ fields, btnEvent });
+    return this.props.buildList({ fields, pageCode: 805000, deleteCode: 805004 });
   }
 }
 

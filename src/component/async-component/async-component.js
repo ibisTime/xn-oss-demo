@@ -1,4 +1,3 @@
-// async-component.js
 /**
  * 用于react router4 code splitting
  */

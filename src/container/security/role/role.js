@@ -1,18 +1,26 @@
 import React from 'react';
-import { getInitData, getPageTableData, clearSearchParam } from '@redux/security.role';
+import {
+  setTableData,
+  setPagination,
+  setBtnList,
+  setSearchParam,
+  clearSearchParam,
+  doFetching,
+  cancelFetching,
+  setSearchData
+} from '@redux/security/role';
 import { listWrapper } from 'common/js/build-list';
+import { showWarnMsg } from 'common/js/util';
 
 @listWrapper(
   state => ({
     ...state.securityRole,
     parentCode: state.menu.subMenuCode
   }),
-  { getInitData, getPageTableData, clearSearchParam }
+  { setTableData, clearSearchParam, doFetching, setBtnList,
+    cancelFetching, setPagination, setSearchParam, setSearchData }
 )
 class Role extends React.Component {
-  componentDidMount() {
-    this.props.getInitData(this.props.parentCode);
-  }
   render() {
     const fields = [{
       title: '角色名称',
@@ -21,15 +29,8 @@ class Role extends React.Component {
     }, {
       title: '角色等级',
       field: 'level',
-      formatter: (level) => {
-        if (level && this.props.searchData['role_level']) {
-          let item = this.props.searchData['role_level'].find(v => v.dkey === level);
-          return item ? item.dvalue : '';
-        }
-        return '';
-      },
       type: 'select',
-      data: this.props.searchData['role_level'],
+      key: 'role_level',
       keyName: 'dkey',
       valueName: 'dvalue',
       search: true
@@ -45,11 +46,17 @@ class Role extends React.Component {
       field: 'remark'
     }];
     const btnEvent = {
-      delete: () => {
-        console.log('delete');
+      change: (selectedRowKeys, selectedRows) => {
+        if (!selectedRowKeys) {
+          showWarnMsg('请选择记录');
+        } else if (selectedRowKeys.length > 1) {
+          showWarnMsg('请选择一条记录');
+        } else {
+          this.props.history.push(`/security/role/menu?code=${selectedRowKeys[0]}&name=${selectedRows[0].name}`);
+        }
       }
     };
-    return this.props.buildList({ fields, btnEvent });
+    return this.props.buildList({ fields, btnEvent, pageCode: 805020, deleteCode: 805024 });
   }
 }
 

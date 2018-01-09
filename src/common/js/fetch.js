@@ -1,18 +1,16 @@
-import { SYSTEM_CODE, COMPANY_CODE } from './config';
+import { SYSTEM_CODE } from './config';
 import cookies from 'browser-cookies'
 import axios from 'axios';
-import { message } from 'antd';
-import { clearUser } from './util';
+import { clearUser, showErrMsg } from './util';
 
 const ERR_OK = '0';
 const ERR_TIME_OUT = '4';
 
-export default function fetch(code, param) {
+export default function fetch(code, param = {}) {
   const url = '/api';
 
   const data = {
     systemCode: SYSTEM_CODE,
-    companyCode: COMPANY_CODE,
     token: cookies.get('token'),
     updater: cookies.get('userName'),
     ...param
@@ -31,9 +29,9 @@ export default function fetch(code, param) {
     }
     if(res.errorCode !== ERR_OK) {
       if (res.errorInfo) {
-        message.error(res.errorInfo.toString());
+        showErrMsg(res.errorInfo.toString());
       } else {
-        message.error('操作失败');
+        showErrMsg('操作失败');
       }
       return Promise.reject(res.errorInfo);
     }
@@ -43,6 +41,6 @@ export default function fetch(code, param) {
 
 function logout() {
   clearUser();
-  message.error('登录超时，请重新登录!');
+  showErrMsg('登录超时，请重新登录!');
   window.location.href = '/login';
 }

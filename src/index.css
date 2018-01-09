@@ -53,3 +53,15 @@ body {
 .detail-form-wrapper {
   width: 600px;
 }
+
+.detail-form-wrapper .readonly-text {
+  padding: 9px 11px;
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.detail-form-wrapper .ant-upload-list-item-done .ant-upload-list-item-info > span {
+  height: 100%;
+}

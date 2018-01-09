@@ -1,8 +1,4 @@
 OSS By React
-## Table of Contents
 
-- [Available Scripts](#available-scripts)
-  - [npm start](#npm-start)
-  - [npm test](#npm-test)
-  - [npm run build](#npm-run-build)
-  - [npm run eject](#npm-run-eject)
+1、npm start
+2、node server/server.js
