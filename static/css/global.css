@@ -1265,3 +1265,101 @@ svg circle:hover {
 .search-form-li-date{
 	min-width: 455px !important;
 }
+@keyframes antRotate {
+    100% {
+        transform: rotate(405deg);
+    }
+}
+@keyframes antSpinMove {
+    100% {
+        opacity: 1;
+    }
+}
+.ant-spin-nested-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+}
+.ant-spin-nested-loading.modal-map-ant-spin-loading {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: inherit;
+    width: inherit;
+    bottom: 0;
+    z-index: 1002;
+}
+
+.ant-spin-nested-loading .ant-spin-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -14px;
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    transform: rotate(45deg);
+    animation: antRotate 1.2s infinite linear;
+}
+.ant-spin-nested-loading .ant-spin-dot i {
+    width: 9px;
+    height: 9px;
+    border-radius: 100%;
+    background-color: #2598d0;
+    transform: scale(.75);
+    display: block;
+    position: absolute;
+    opacity: 0.3;
+    animation: antSpinMove 1s infinite linear alternate;
+    transform-origin: 50% 50%;
+
+}
+.ant-spin-nested-loading .ant-spin-dot i:first-child {
+    left: 0;
+    top: 0;
+}
+
+.ant-spin-nested-loading .ant-spin-dot i:nth-child(2) {
+    right: 0;
+    top: 0;
+    animation-delay: 0.4s;
+}
+
+.ant-spin-nested-loading .ant-spin-dot i:nth-child(3) {
+    right: 0;
+    bottom: 0;
+    animation-delay: 0.8s;
+}
+
+.ant-spin-nested-loading .ant-spin-dot i:nth-child(4) {
+    left: 0;
+    bottom: 0;
+    animation-delay: 1.2s;
+}
+
+.ant-spin-nested-loading .ant-spin-blur {
+        overflow: hidden;
+        opacity: 0.7;
+        filter: blur(.5px);
+        filter: progid\: DXImageTransform\.Microsoft\.Blur(PixelRadius\=1,MakeShadow\=false);
+        -webkit-transform: translateZ(0);
+    }
+
+.ant-spin-nested-loading .ant-spin-container {
+        transition: all 0.3s cubic-bezier(.645,.045,.355,1);
+        position: relative;
+        height: 100%;
+        background-color: #fff;
+    }
+.hidden{
+	display: none;
+}
+.fixed_i{
+	position: fixed !important;
+}
+

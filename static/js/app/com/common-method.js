@@ -620,6 +620,7 @@ function objectArrayFilter(arr, keys) {
 }
 
 function buildList(options) {
+	showLoading();
     options = options || {};
     var searchs = JSON.parse(sessionStorage.getItem('listSearchs') || '{}')[location.pathname];
 
@@ -867,7 +868,8 @@ function buildList(options) {
                 });
             }
             var data = codeParams;
-
+			
+			showLoading();
             reqApi({ code: options.deleteCode, json: data }).done(function(data) {
                 sucList();
             });
@@ -970,8 +972,13 @@ function buildList(options) {
         tableEl = $('#' + options.tableId);
     }
     tableEl.on('load-success.bs.table', function () {
+    	hideLoading();
         updateTableInfo('tableList');
     });
+    tableEl.on('page-change.bs.table', function () {
+        showLoading()
+    });
+    
     var tableInfo = JSON.parse(sessionStorage.getItem('tableInfo') || '{}')[location.pathname] || {};
     //表格初始化
     tableEl.bootstrapTable({
@@ -1042,6 +1049,7 @@ function selectImage(file, name) {
 }
 
 function buildDetail(options) {
+	showLoading();
     options = options || {};
     var code = options.code;
     var fields = options.fields;
@@ -1319,13 +1327,14 @@ function buildDetail(options) {
             }
 
             var request = function() {
+            	showLoading();
                 reqApi({
                     code: code ?
                         options.editCode : options.addCode,
                     json: data
-                }).done(function(data) {
-                    sucDetail();
-                });
+                }).then(function(data){
+                	sucDetail();
+                },hideLoading);
             };
 
             if (options.beforeSubmitAsync) {
@@ -1556,10 +1565,12 @@ function buildDetail(options) {
 
     //是否请求详情
     if (code) {
+    	showLoading();
         reqApi({
             code: options.detailCode,
             json: detailParams
-        }).done(function(d) {
+        }).then(function(d) {
+        	hideLoading();
             var data = d;
             if (options._keys) {
                 options._keys.forEach(function(key) {
@@ -1914,7 +1925,7 @@ function buildDetail(options) {
                 }
             }
             options.afterData && options.afterData(data);
-        });
+        },hideLoading);
     } else {
         for (var i = 0, len = fields.length; i < len; i++) {
             var item = fields[i];
@@ -2196,12 +2207,14 @@ function sleep(ms) {
 }
 
 function sucList() {
+	hideLoading();
     toastr.success('操作成功');
     var option = $('#tableList').bootstrapTable('getOptions');
     $('#tableList').bootstrapTable('refreshOptions', { pageNumber: option.pageNumber, pageSize: option.pageSize });
 }
 
 function sucDetail() {
+	hideLoading();
     toastr.success('操作成功');
     sleep(1000).then(function() {
         goBack();
@@ -3133,12 +3146,13 @@ function buildCharts(options) {
         json.systemCode = sessionStorage.getItem('systemCode');
 
         $.extend(json, options.searchParams, searchFormParams);
-
+		
+		showLoading();
         reqApi({
             code: options.pageCode,
             json: json,
             sync: true,
-        }).done(function(data) {
+        }).then(function(data) {
 
             //请求数据
             var data = data;
@@ -3343,7 +3357,7 @@ function buildCharts(options) {
 
 
             myChart.setOption(chartOption);
-        });
+        },hideLoading);
     }
 
 }
@@ -3725,4 +3739,10 @@ function updateTableInfo(id) {
     var params = { pageNumber: option.pageNumber, pageSize: option.pageSize };
     searchs[pathName] = params;
     sessionStorage.setItem('tableInfo', JSON.stringify(searchs));
+}
+function showLoading() {
+    $("#loadingSpin").removeClass("hidden");
+}
+function hideLoading() {
+    $("#loadingSpin").addClass("hidden");
 }

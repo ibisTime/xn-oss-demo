@@ -668,6 +668,11 @@
             var getNewUpToken = function(file) {
                 if (op.uptoken) {
                     that.token = op.uptoken;
+                    that.tokenInfo = {
+                            isExpired: function() {
+                                return false;
+                            }
+                        };
                 } else if (op.uptoken_url) {
                     logger.debug("get uptoken from: ", that.uptoken_url);
                     // TODO: use mOxie
