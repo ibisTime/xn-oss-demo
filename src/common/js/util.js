@@ -124,29 +124,37 @@ export function dateTimeFormat(date) {
  */
 export function moneyFormat(money, format) {
   var flag = true;
-  if (isNaN(money)) {
-    return '-';
-  }
-  if (money < 0) {
-    money = -1 * money;
-    flag = false;
-  }
-  if (format === '' || format === null || format === undefined || typeof format === 'object') {
-    format = 2;
-  }
-  //钱除以1000并保留两位小数
-  money = (money / 1000).toString();
-  money = money.replace(/(\.\d\d)\d+/ig, "$1");
-  money = parseFloat(money).toFixed(format);
-  //千分位转化
-  var re = /\d{1,3}(?=(\d{3})+$)/g;
-  money = money.replace(/^(\d+)((\.\d+)?)$/, function(s, s1, s2) {
-    return s1.replace(re, "$&,") + s2;
-  });
-  if (!flag) {
-    money = "-" + money;
-  }
-  return money;
+	if (isNaN(money)) {
+		return '-';
+	}
+	if (money < 0) {
+		money = -1 * money;
+		flag = false;
+	}
+	if (isUndefined(format) || typeof format === 'object') {
+		format = 2;
+	}
+	// 钱除以1000并保留两位小数
+	money = (money / 1000).toString();
+  var reg = new RegExp('(\\.\\d{' + format + '})\\d+', 'ig');
+  money = money.replace(reg, '$1');
+	money = parseFloat(money).toFixed(format);
+	// 千分位转化
+	var re = /\d{1,3}(?=(\d{3})+$)/g;
+	money = money.replace(/^(\d+)((\.\d+)?)$/, (s, s1, s2) => (s1.replace(re, '$&,') + s2));
+	if (!flag) {
+		money = "-" + money;
+	}
+	return money;
+}
+
+/**
+ * 把格式化金额转成接口需要的
+ * @param money
+ * @param rate
+ */
+export function moneyParse(money, rate = 1000) {
+	return ((+('' + money).replace(/,/g, '')) * rate).toFixed(0);
 }
 
 /**

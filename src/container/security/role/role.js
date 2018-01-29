@@ -47,7 +47,7 @@ class Role extends React.Component {
     }];
     const btnEvent = {
       change: (selectedRowKeys, selectedRows) => {
-        if (!selectedRowKeys) {
+        if (!selectedRowKeys.length) {
           showWarnMsg('请选择记录');
         } else if (selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');

@@ -4,7 +4,7 @@ import { Form, Select, Input, Button, Tooltip, Icon, Spin, Upload, Modal } from 
 import E from 'wangeditor';
 import { getDictList } from 'api/dict';
 import { getQiniuToken } from 'api/general';
-import { formatImg, isUndefined, dateTimeFormat, dateFormat, showSucMsg } from 'common/js/util';
+import { formatImg, isUndefined, dateTimeFormat, dateFormat, moneyFormat, moneyParse, showSucMsg } from 'common/js/util';
 import { formItemLayout, tailFormItemLayout } from './config';
 import fetch from 'common/js/fetch';
 
@@ -84,6 +84,11 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           }
           areaKeys.forEach(v => values[v] = this.textareas[v].editorContent);
           values.code = this.props.code || '';
+          this.options.fields.forEach(v => {
+            if (v.amount) {
+              values[v.field] = moneyParse(v.amount, v.amountRate);
+            }
+          });
           if (this.options.beforeSubmit && !this.options.beforeSubmit(values)) {
   					return;
           }
@@ -193,21 +198,21 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
         const { getFieldDecorator } = this.props.form;
         let comp;
         let rules = this.getRules(item);
+        let initVal = this.getRealValue(item);
         if (type === 'select') {
-          comp = this.getSelectComp(item, rules, getFieldDecorator);
+          comp = this.getSelectComp(item, initVal, rules, getFieldDecorator);
         } else if (type === 'img') {
-          comp = this.getImgComp(item, rules, getFieldDecorator);
+          comp = this.getImgComp(item, initVal, rules, getFieldDecorator);
         } else if (type === 'textarea' && item.normalArea) {
-          comp = this.getNormalTextArea(item, rules, getFieldDecorator);
+          comp = this.getNormalTextArea(item, initVal, rules, getFieldDecorator);
         } else if (type === 'textarea') {
-          comp = this.getTextArea(item, rules, getFieldDecorator);
+          comp = this.getTextArea(item, initVal, rules, getFieldDecorator);
         } else {
-          comp = this.getInputComp(item, rules, getFieldDecorator);
+          comp = this.getInputComp(item, initVal, rules, getFieldDecorator);
         }
         return comp;
       }
-      getSelectComp(item, rules, getFieldDecorator) {
-        let initVal = isUndefined(item.value) ? this.props.pageData[item.field] : item.value;
+      getSelectComp(item, initVal, rules, getFieldDecorator) {
         return (
           <FormItem key={item.field} {...formItemLayout} label={this.getLabel(item)}>
             {
@@ -233,8 +238,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           </FormItem>
         );
       }
-      getInputComp(item, rules, getFieldDecorator) {
-        let initVal = isUndefined(item.value) ? this.props.pageData[item.field] : item.value;
+      getInputComp(item, initVal, rules, getFieldDecorator) {
         return (
           <FormItem
             className={item.hidden ? 'hidden' : ''}
@@ -251,12 +255,12 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           </FormItem>
         );
       }
-      getImgComp(item, rules, getFieldDecorator) {
+      getImgComp(item, initVal, rules, getFieldDecorator) {
         const { token } = this.state;
         !token && this.getToken();
         let initValue = [];
-        if (this.props.pageData[item.field]) {
-          initValue = this.props.pageData[item.field].split('||').map(key => ({
+        if (initVal) {
+          initValue = initVal.split('||').map(key => ({
             key,
             uid: key,
             status: 'done',
@@ -267,7 +271,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           <FormItem key={item.field} {...formItemLayout} label={this.getLabel(item)}>
             {getFieldDecorator(item.field, {
               rules,
-              initialValue: this.props.pageData[item.field],
+              initialValue: initVal,
               getValueFromEvent: this.normFile
             })(
               this.options.code && !initValue.length && item.required
@@ -281,19 +285,24 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
                     defaultFileList={initValue}
                     data={{ token }}
                     onPreview={this.handlePreview}
+                    showUploadList={{
+                      showPreviewIcon: true,
+                      showRemoveIcon: !item.readonly
+                    }}
                   >
-                    {item.single
-                      ? this.props.form.getFieldValue(item.field)
-                        ? null : uploadButton
-                      : uploadButton }
+                    {item.readonly
+                      ? null
+                      : item.single
+                        ? this.props.form.getFieldValue(item.field)
+                          ? null : uploadButton
+                        : uploadButton }
                   </Upload>
                 )
             )}
           </FormItem>
         )
       }
-      getNormalTextArea(item, rules, getFieldDecorator) {
-        let initVal = isUndefined(item.value) ? this.props.pageData[item.field] : item.value;
+      getNormalTextArea(item, initVal, rules, getFieldDecorator) {
         return (
           <FormItem
             key={item.field}
@@ -309,8 +318,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           </FormItem>
         );
       }
-      getTextArea(item, rules, getFieldDecorator) {
-        let initVal = this.props.pageData[item.field];
+      getTextArea(item, initVal, rules, getFieldDecorator) {
         this.textareas[item.field] = this.textareas[item.field] || {};
         if (this.options.code && initVal && !this.textareas[item.field].editorContent
           && this.textareas[item.field].editor && !this.textareas[item.field].initFlag) {
@@ -319,18 +327,26 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           this.textareas[item.field].editor.txt.html(initVal);
         }
         if (!this.state.textareas[item.field]) {
-          this.state.textareas[item.field] = {
-            validateStatus: 'success',
-            errorMsg: null
-          };
+          this.setState({
+            textareas: {
+              ...this.state.textareas,
+              [item.field]: {
+                validateStatus: 'success',
+                errorMsg: null
+              }
+            }
+          });
         }
-        let areaState = this.state.textareas[item.field];
+        let areaState = this.state.textareas[item.field] || {
+          validateStatus: 'success',
+          errorMsg: null
+        };
         return (
           <FormItem
             key={item.field}
             {...formItemLayout}
             validateStatus={areaState.validateStatus}
-            help={areaState.errorMsg || ''}
+            help={areaState.errorMsg}
             label={this.getLabel(item)}>
             {
               item.readonly ? <div className="readonly-text" dangerouslySetInnerHTML={{__html: initVal}}></div>
@@ -338,6 +354,27 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
             }
           </FormItem>
         );
+      }
+      getRealValue(item) {
+        let result = this.props.pageData[item.field];
+        try {
+          if (item._keys) {
+            let _value = {...this.props.pageData};
+            let emptyObj = {};
+            item._keys.forEach(key => {
+              _value = isUndefined(_value[key]) ? emptyObj : _value[key];
+            });
+            result = _value;
+          } else if (!isUndefined(item.value)) {
+            result = item.value;
+          }
+          if (item.formatter) {
+            result = item.formatter(result, this.props.pageData);
+          } else if (item.amount) {
+            result = moneyFormat(result, item.amountRate);
+          }
+        } catch(e) {}
+        return result;
       }
       getLabel(item) {
         return (
@@ -375,6 +412,43 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           rules.push({
             required: true,
             message: '必填字段'
+          });
+        }
+        if (item.maxlength) {
+          rules.push({
+            min: 1,
+            max: item.maxlength,
+            message: `请输入一个长度最多是${item.maxlength}的字符串`
+          });
+        }
+        if (item.email) {
+          rules.push({
+            type: 'email',
+            message: '请输入正确格式的电子邮件'
+          });
+        }
+        if (item.mobile) {
+          rules.push({
+            pattern: /^1[3|4|5|7|8]\d{9}$/,
+            message: '手机格式不对'
+          });
+        }
+        if (item['Z+']) {
+          rules.push({
+            pattern: /^[1-9]\d*$/,
+            message: '请输入正整数'
+          });
+        }
+        if (item.number) {
+          rules.push({
+            pattern: /^-?\d+(\.\d+)?$/,
+            message: '请输入合法的数字'
+          });
+        }
+        if (item.integer) {
+          rules.push({
+            type: /^-?\d+$/,
+            message: '请输入合法的整数'
           });
         }
         return rules;

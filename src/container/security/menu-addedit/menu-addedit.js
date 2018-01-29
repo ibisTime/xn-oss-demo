@@ -33,11 +33,13 @@ class MenuAddEdit extends React.Component {
     }, {
       title: '菜单名称',
       field: 'name',
-      required: true
+      required: true,
+      maxlength: 32
     }, {
       title: '菜单地址',
       field: 'url',
-      required: true
+      required: true,
+      maxlength: 64
     }, {
       title: '类型',
       field: 'type',
@@ -55,10 +57,13 @@ class MenuAddEdit extends React.Component {
     }, {
       title: '菜单顺序号',
       field: 'orderNo',
-      required: true
+      help: '数字越小，排序越靠前',
+      required: true,
+      'Z+': true
     }, {
       title: '备注',
-      field: 'remark'
+      field: 'remark',
+	    maxlength: 250
     }];
     return this.props.buildDetail({
       fields,

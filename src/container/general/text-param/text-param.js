@@ -10,6 +10,7 @@ import {
   setSearchData
 } from '@redux/general/text-param';
 import { listWrapper } from 'common/js/build-list';
+import { showWarnMsg } from 'common/js/util';
 
 @listWrapper(
   state => ({
@@ -41,6 +42,15 @@ class TextParam extends React.Component {
       rowKey: 'id',
       searchParams: {
         type: 'text'
+      },
+      btnEvent: {
+        edit: (key, item) => {
+          if (!key || !key.length || !item || !item.length) {
+            showWarnMsg('请选择记录');
+          } else {
+            this.props.history.push(`/general/textParam/addedit?code=${key[0]}&ckey=${item[0].ckey}&type=${item[0].type}`);
+          }
+        }
       }
     });
   }

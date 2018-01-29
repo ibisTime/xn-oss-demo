@@ -65,7 +65,7 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
       }
       goDetail(view) {
         const { selectedRowKeys } = this.state;
-        if (!selectedRowKeys) {
+        if (!selectedRowKeys.length) {
           showWarnMsg('请选择记录');
         } else if (!this.options.singleSelect && selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');
@@ -75,7 +75,7 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
       }
       delete() {
         const { selectedRowKeys } = this.state;
-        if (!selectedRowKeys) {
+        if (!selectedRowKeys.length) {
           showWarnMsg('请选择记录');
         } else if (!this.options.singleSelect && selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');
@@ -103,17 +103,17 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
             break;
           case 'edit':
             btnEvent.edit
-              ? btnEvent.edit(this.state.selectedRowKeys)
+              ? btnEvent.edit(this.state.selectedRowKeys, this.state.selectedRows)
               : this.goDetail();
             break;
           case 'detail':
             btnEvent.detail
-              ? btnEvent.detail(this.state.selectedRowKeys)
+              ? btnEvent.detail(this.state.selectedRowKeys, this.state.selectedRows)
               : this.goDetail();
             break;
           case 'delete':
             btnEvent.detail
-              ? btnEvent.delete(this.state.selectedRowKeys)
+              ? btnEvent.delete(this.state.selectedRowKeys, this.state.selectedRows)
               : this.delete();
             break;
           default:

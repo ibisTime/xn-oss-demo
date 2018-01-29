@@ -22,9 +22,14 @@ class MenuAddEdit extends React.Component {
   }
   render() {
     const fields = [{
+      field: 'kind',
+      value: 1,
+      hidden: true
+    }, {
       title: '角色名称',
       field: 'name',
-      required: true
+      required: true,
+      maxlength: 30
     }, {
       title: '角色等级',
       field: 'level',
@@ -35,13 +40,11 @@ class MenuAddEdit extends React.Component {
       valueName: 'dvalue'
     }, {
       title: '备注',
-      field: 'remark'
+      field: 'remark',
+	    maxlength: 250
     }];
     return this.props.buildDetail({
       fields,
-      beforeDetail: (param) => {
-        param.kind = 1;
-      },
       code: this.code,
       view: this.view,
       detailCode: 805022,

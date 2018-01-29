@@ -67,6 +67,7 @@ class BannerAddEdit extends React.Component {
     }, {
       title: '顺序',
       field: 'orderNo',
+      help: '数字越小，排序越靠前',
       required: true
     }, {
       title: 'banner图片',
@@ -79,7 +80,8 @@ class BannerAddEdit extends React.Component {
       field: 'url'
     }, {
       title: '备注',
-      field: 'remark'
+      field: 'remark',
+	    maxlength: 250
     }];
     return this.props.buildDetail({
       fields,

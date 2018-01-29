@@ -42,6 +42,10 @@ body {
   overflow: auto;
 }
 
+.table-wrapper .ant-table tbody tr {
+  cursor: pointer;
+}
+
 .table-wrapper .ant-table-bordered .ant-table-thead > tr > th {
   white-space: nowrap;
 }
