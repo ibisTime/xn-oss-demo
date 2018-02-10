@@ -15,7 +15,7 @@ const initState = {
   userName: '',
   roleCode: '',
   kind: ''
-}
+};
 
 export function user (state = initState, action) {
   switch (action.type) {
@@ -63,7 +63,7 @@ export function getUser() {
     }).catch(msg => {
       dispatch(cancelFetching());
     });
-  }
+  };
 }
 
 // 登录
@@ -85,7 +85,7 @@ export function login({ loginName, loginPwd }) {
     }).catch(msg => {
       dispatch(cancelFetching());
     });
-  }
+  };
 }
 
 function _getUser() {

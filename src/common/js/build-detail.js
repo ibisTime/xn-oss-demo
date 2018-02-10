@@ -19,13 +19,13 @@ const uploadButton = (
   </div>
 );
 
-export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps = {}) => (WrapComponent) => {
+export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
   return (
     @Form.create()
     @connect(mapStateToProps, mapDispatchToProps)
     class DetailComponent extends React.Component {
-      constructor(props, context){
-  			super(props, context);
+      constructor(props, context) {
+        super(props, context);
         this.first = true;
         this.options = {
           fields: [],
@@ -40,7 +40,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
           textareas: {}
         };
         this.textareas = {};
-  		}
+      }
       componentDidMount() {
         Object.keys(this.textareas).forEach(v => {
           let elem = document.getElementById(v);
@@ -90,7 +90,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
             }
           });
           if (this.options.beforeSubmit && !this.options.beforeSubmit(values)) {
-  					return;
+            return;
           }
           let code = this.props.code ? this.options.editCode : this.options.addCode;
           this.props.doFetching();
@@ -118,7 +118,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
       handlePreview = (file) => {
         this.setState({
           previewImage: file.url || file.thumbUrl,
-          previewVisible: true,
+          previewVisible: true
         });
       }
       getToken() {
@@ -140,12 +140,12 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
         }
         const children = [];
         this.options.fields.forEach(f => {
+          f.readonly = this.options.view || f.readonly;
           if (f.type === 'select') {
             if (f.key) {
               f.keyName = f.keyName || 'dkey';
               f.valueName = f.valueName || 'dvalue';
             }
-            f.readonly = this.options.view || f.readonly;
             if (!f.data) {
               f.data = this.props.selectData[f.field];
               this.first && this.getSelectData(f);
@@ -219,7 +219,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
               item.readonly ? <div className="readonly-text">{initVal}</div>
               : getFieldDecorator(item.field, {
                 rules,
-                initialValue: initVal,
+                initialValue: initVal
               })(
                 <Select
                   showSearch
@@ -250,7 +250,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
               : getFieldDecorator(item.field, {
                 rules,
                 initialValue: initVal
-              })( <Input type={item.type ? item.type : item.hidden ? 'hidden' : 'text'}/> )
+              })(<Input type={item.type ? item.type : item.hidden ? 'hidden' : 'text'}/>)
             }
           </FormItem>
         );
@@ -300,7 +300,7 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
                 )
             )}
           </FormItem>
-        )
+        );
       }
       getNormalTextArea(item, initVal, rules, getFieldDecorator) {
         return (
@@ -313,15 +313,15 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
               : getFieldDecorator(item.field, {
                 rules,
                 initialValue: initVal
-              })( <TextArea autosize /> )
+              })(<TextArea autosize />)
             }
           </FormItem>
         );
       }
       getTextArea(item, initVal, rules, getFieldDecorator) {
         this.textareas[item.field] = this.textareas[item.field] || {};
-        if (this.options.code && initVal && !this.textareas[item.field].editorContent
-          && this.textareas[item.field].editor && !this.textareas[item.field].initFlag) {
+        if (this.options.code && initVal && !this.textareas[item.field].editorContent &&
+          this.textareas[item.field].editor && !this.textareas[item.field].initFlag) {
           this.textareas[item.field].initFlag = true;
           this.textareas[item.field].editorContent = initVal;
           this.textareas[item.field].editor.txt.html(initVal);
@@ -374,11 +374,11 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
             result = moneyFormat(result, item.amountRate);
           }
         } catch(e) {}
-        return result;
+        return isUndefined(result) ? '-' : result;
       }
       getLabel(item) {
         return (
-          <span className={item.required && item.type==='textarea' && !item.normalArea ? 'ant-form-item-required' : ''}>
+          <span className={item.required && item.type === 'textarea' && !item.normalArea ? 'ant-form-item-required' : ''}>
             {item.title + (item.single ? '(单)' : '')}
             {item.help
               ? <Tooltip title={item.help}>
@@ -454,8 +454,8 @@ export const DetailWrapper = (mapStateToProps = state=>state, mapDispatchToProps
         return rules;
       }
       render() {
-  			return <WrapComponent {...this.props} buildDetail={this.buildDetail}></WrapComponent>;
-  		}
+        return <WrapComponent {...this.props} buildDetail={this.buildDetail}></WrapComponent>;
+      }
     }
   );
-}
+};

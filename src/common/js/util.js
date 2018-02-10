@@ -1,6 +1,7 @@
 import cookies from 'browser-cookies';
 import { message, Modal } from 'antd';
 import { PIC_PREFIX } from './config';
+import './lib/BigDecimal';
 
 /**
  * 保存用户登录信息
@@ -46,9 +47,9 @@ export function getQueryString(name, search) {
   var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
   var r = search.substr(1).match(reg);
   if (r != null) {
-      return decodeURIComponent(r[2]);
+    return decodeURIComponent(r[2]);
   }
-  return null;
+  return '';
 }
 
 /**
@@ -67,8 +68,8 @@ export function getRealUrl(url) {
  * @param date
  * @param fmt
  */
-export function formatDate(date, fmt = "yyyy-MM-dd") {
-  if (date === '' || typeof(date) === 'undefined') {
+export function formatDate(date, fmt = 'yyyy-MM-dd') {
+  if (isUndefined(date)) {
     return '-';
   }
   date = new Date(date);
@@ -105,7 +106,7 @@ function padLeftZero(str) {
  * @param format
  */
 export function dateFormat(date) {
-    return formatDate(date, 'yyyy-MM-dd');
+  return formatDate(date, 'yyyy-MM-dd');
 }
 
 /**
@@ -122,30 +123,19 @@ export function dateTimeFormat(date) {
  * @param money
  * @param format
  */
-export function moneyFormat(money, format) {
-  var flag = true;
-	if (isNaN(money)) {
-		return '-';
-	}
-	if (money < 0) {
-		money = -1 * money;
-		flag = false;
-	}
-	if (isUndefined(format) || typeof format === 'object') {
-		format = 2;
-	}
-	// 钱除以1000并保留两位小数
-	money = (money / 1000).toString();
-  var reg = new RegExp('(\\.\\d{' + format + '})\\d+', 'ig');
-  money = money.replace(reg, '$1');
-	money = parseFloat(money).toFixed(format);
-	// 千分位转化
-	var re = /\d{1,3}(?=(\d{3})+$)/g;
-	money = money.replace(/^(\d+)((\.\d+)?)$/, (s, s1, s2) => (s1.replace(re, '$&,') + s2));
-	if (!flag) {
-		money = "-" + money;
-	}
-	return money;
+export function moneyFormat(money, format = 8, coin) {
+  var unit = coin === 'SC' ? '1e24' : '1e18';
+  if (isUndefined(money)) {
+    return '-';
+  }
+  format = typeof format === 'object' ? 8 : format;
+  money = new BigDecimal(money);
+  money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
+  // money = money.replace(/^(.+\..*[^0])0+$/, '$1').replace(/^(.+)\.0+$/, '$1');
+  // 千分位转化
+  var re = /\d{1,3}(?=(\d{3})+$)/g;
+  money = money.replace(/^(\d+)((\.\d+)?)$/, (s, s1, s2) => (s1.replace(re, '$&,') + s2));
+  return money;
 }
 
 /**
@@ -154,7 +144,7 @@ export function moneyFormat(money, format) {
  * @param rate
  */
 export function moneyParse(money, rate = 1000) {
-	return ((+('' + money).replace(/,/g, '')) * rate).toFixed(0);
+  return ((+('' + money).replace(/,/g, '')) * rate).toFixed(0);
 }
 
 /**
@@ -181,6 +171,13 @@ export function formatImg(imgs, suffix = '?imageMogr2/auto-orient') {
 export function isUndefined(value) {
   return value === undefined || value === null;
 }
+
+export function tempString(str, data) {
+  return str.replace(/\{\{(\w+)\.DATA\}\}/gi, function(matchs) {
+    var returns = data[matchs.replace(/\{\{(\w+)\.DATA\}\}/, '$1')];
+    return isUndefined(returns) ? '' : returns;
+  });
+};
 
 export function showMsg(msg, type = 'success', time = 2) {
   message[type](msg, time);
@@ -215,5 +212,5 @@ export function showConfirm({ okType = 'primary', onOk, onCancel }) {
 }
 
 export function showDelConfirm({ onOk, onCancel }) {
-  showConfirm({ okType: 'danger', onOk, onCancel })
+  showConfirm({ okType: 'danger', onOk, onCancel });
 }

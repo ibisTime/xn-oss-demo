@@ -49,7 +49,31 @@ const ROUTES = [
   {
     path: '/system/menu/addedit',
     component: asyncComponent(() => import('container/security/menu-addedit/menu-addedit'))
+  },
+  {
+    path: '/finance/breakBalance',
+    component: asyncComponent(() => import('container/finance/account/account'))
+  },
+  {
+    path: '/finance/breakBalance/ledger',
+    component: asyncComponent(() => import('container/finance/ledger/ledger'))
+  },
+  {
+    path: '/finance/breakBalance/ledger/addedit',
+    component: asyncComponent(() => import('container/finance/ledger-addedit/ledger-addedit'))
+  },
+  {
+    path: '/finance/platform_ledger',
+    component: asyncComponent(() => import('container/finance/platform-ledger/platform-ledger'))
+  },
+  {
+    path: '/finance/platform_ledger/addedit',
+    component: asyncComponent(() => import('container/finance/ledger-addedit/ledger-addedit'))
+  },
+  {
+    path: '/finance/diviAddress',
+    component: asyncComponent(() => import('container/finance/dist-addr/dist-addr'))
   }
-]
+];
 
 export default ROUTES;

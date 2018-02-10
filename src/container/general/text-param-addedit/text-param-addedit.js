@@ -27,7 +27,7 @@ class TextParamAddEdit extends React.Component {
       title: '参数说明',
       field: 'remark',
       readonly: true,
-	    maxlength: 250
+      maxlength: 250
     }];
     let vField = {
       title: '参数值',
@@ -50,7 +50,7 @@ class TextParamAddEdit extends React.Component {
         formatter: function (v, data) {
             return JSON.parse(data.cvalue).pic;
         }
-      }
+      };
     }
     fields.push(vField);
     wxConfig && fields.push(wxConfig);

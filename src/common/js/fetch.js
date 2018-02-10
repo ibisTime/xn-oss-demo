@@ -1,5 +1,5 @@
 import { SYSTEM_CODE } from './config';
-import cookies from 'browser-cookies'
+import cookies from 'browser-cookies';
 import axios from 'axios';
 import { clearUser, showErrMsg } from './util';
 
@@ -12,7 +12,7 @@ export default function fetch(code, param = {}) {
   const data = {
     systemCode: SYSTEM_CODE,
     token: cookies.get('token'),
-    updater: cookies.get('userName'),
+    // updater: cookies.get('userName'),
     ...param
   };
 

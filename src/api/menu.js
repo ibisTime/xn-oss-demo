@@ -27,7 +27,7 @@ export function getRoleMenuList() {
   return fetch(805026, {
     type: 1,
     roleCode: getRoleCode()
-  })
+  });
 }
 
 /**

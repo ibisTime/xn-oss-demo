@@ -1,25 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, Select, Input, Button, Table } from 'antd';
-import { dateTimeFormat, dateFormat, showWarnMsg, showSucMsg, showDelConfirm } from 'common/js/util';
+import { Form, Select, DatePicker, Input, Button, Table } from 'antd';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+import { moneyFormat, dateTimeFormat, dateFormat, tempString, showWarnMsg, showSucMsg, showDelConfirm } from 'common/js/util';
 import { getOwnerBtns } from 'api/menu';
 import { getDictList } from 'api/dict';
 import fetch from 'common/js/fetch';
+import locale from './lib/date-locale';
 
+moment.locale('zh-cn');
 const FormItem = Form.Item;
 const Option = Select.Option;
+const { RangePicker } = DatePicker;
 
-export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps = {}) => (WrapComponent) => {
+export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
   return (
     @Form.create()
     @connect(mapStateToProps, mapDispatchToProps)
     class ListComponent extends React.Component {
-      constructor(props, context){
-  			super(props, context);
-  			this.state = {
+      constructor(props, context) {
+        super(props, context);
+        this.state = {
           selectedRowKeys: [],
           selectedRows: []
-  			};
+        };
         this.first = true;
         this.options = {
           fields: [],
@@ -28,13 +33,31 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
           singleSelect: true,
           searchParams: {}
         };
-  		}
+      }
       onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({ selectedRowKeys, selectedRows });
       }
+      searchSelectChange(key, item, start = 1, limit = 20) {
+        if (this.timeout) {
+          clearTimeout(this.timeout);
+          this.timeout = null;
+        }
+        let params = item.params || {};
+        params.start = start;
+        params.limit = limit;
+        params[item.searchName || item.keyName || item.field] = key;
+        this.timeout = setTimeout(() => {
+          fetch(item.pageCode, params).then(data => {
+            params.start++;
+            let list = this.props.searchData[item.field] || [];
+            list = start === 1 ? [] : list;
+            this.props.setSearchData({ data: list.concat(data.list), key: item.field });
+          }).catch(() => {});
+        }, 300);
+      }
       handleRowClick = (record) => {
         let { selectedRowKeys, selectedRows } = this.state;
-        let { rowKey } = this.options
+        let { rowKey } = this.options;
         let idx = selectedRowKeys.findIndex(v => v === record[rowKey]);
         if (this.options.singleSelect) {
           selectedRowKeys = [record[rowKey]];
@@ -63,6 +86,20 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
         let values = this.props.form.getFieldsValue();
         this.getPageData(1, values);
       }
+      getRealSearchParams(params) {
+        let result = {};
+        this.options.fields.forEach(v => {
+          if (v.rangedate && params[v.field]) {
+            let format = v.type === 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss';
+            v.rangedate.forEach((d, index) => {
+              result[d] = params[v.field][index].format(format);
+            });
+          } else {
+            result[v.field] = params[v.field];
+          }
+        });
+        return result;
+      }
       goDetail(view) {
         const { selectedRowKeys } = this.state;
         if (!selectedRowKeys.length) {
@@ -70,14 +107,15 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
         } else if (!this.options.singleSelect && selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');
         } else {
-          this.props.history.push(`${this.props.location.pathname}/addedit?${view?'v=1&':''}code=${selectedRowKeys[0]}`);
+          let url = `${this.props.location.pathname}/addedit?${view ? 'v=1&' : ''}code=${selectedRowKeys[0]}`;
+          this.props.history.push(url);
         }
       }
       delete() {
         const { selectedRowKeys } = this.state;
         if (!selectedRowKeys.length) {
           showWarnMsg('请选择记录');
-        } else if (!this.options.singleSelect && selectedRowKeys.length > 1) {
+        } else if (this.options.singleSelect && selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');
         } else {
           showDelConfirm({
@@ -109,7 +147,7 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
           case 'detail':
             btnEvent.detail
               ? btnEvent.detail(this.state.selectedRowKeys, this.state.selectedRows)
-              : this.goDetail();
+              : this.goDetail(true);
             break;
           case 'delete':
             btnEvent.detail
@@ -131,7 +169,11 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
         };
         if (this.first) {
           this.options.pageCode && this.getPageData();
-          this.props.parentCode && this.getOwnerBtns();
+          if (this.options.buttons) {
+            this.addOwnerBtns();
+          } else if (this.props.parentCode) {
+            this.getOwnerBtns();
+          }
         }
         const columns = [];
         const searchFields = [];
@@ -160,16 +202,18 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
               if (value && f.data) {
                 let item = f.data.find(v => v[f.keyName] === value);
                 return item
-                  ? f.valueName.push
-                    ? f.valueName.map(v => item[v]).join(' ')
-                    : item[f.valueName]
+                  ? item[f.valueName]
+                    ? item[f.valueName]
+                    : tempString(f.valueName, item)
                   : '';
               }
               return '';
-            }
+            };
           }
           if (f.formatter) {
             obj.render = f.formatter;
+          } else if (f.amount) {
+            obj.render = (v, d) => <span style={{whiteSpace: 'nowrap'}}>{moneyFormat(v, d)}</span>;
           }
           columns.push(obj);
         });
@@ -188,6 +232,8 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
           fetch(item.listCode, param).then(data => {
             this.props.setSearchData({ data, key: item.field });
           }).catch(() => {});
+        } else if (item.pageCode) {
+          // this.searchSelectChange('', item);
         }
       }
       getOwnerBtns() {
@@ -195,11 +241,31 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
           this.props.setBtnList(data);
         }).catch(() => {});
       }
+      addOwnerBtns() {
+        let btnEvent = {};
+        let btns = this.options.buttons.map(v => {
+          btnEvent[v.code] = v.handler;
+          return {
+            code: v.code,
+            name: v.name,
+            url: '/' + v.code
+          };
+        });
+        this.options.btnEvent = btnEvent;
+        this.props.setBtnList(btns);
+      }
       getPageData(current = this.props.pagination.current, searchParam) {
         if (searchParam) {
           this.props.setSearchParam(searchParam);
         } else {
           searchParam = this.props.searchParam;
+        }
+        searchParam = this.getRealSearchParams(searchParam);
+        if (this.options.searchParams) {
+          searchParam = {
+            ...searchParam,
+            ...this.options.searchParams
+          };
         }
         this.props.doFetching();
         const { pagination } = this.props;
@@ -276,29 +342,88 @@ export const listWrapper = (mapStateToProps = state=>state, mapDispatchToProps =
       }
       getItemByType(type, item) {
         let comp;
-        if (type === 'select') {
-          comp = (
-            <Select
-              showSearch
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              style={{ width: 171 }}
-              placeholder="请选择">
-              {item.data ? item.data.map(d => (
-                <Option key={d[item.keyName]} value={d[item.keyName]}>
-                  {item.valueName.push ? item.valueName.map(v => d[v]).join(' ') : d[item.valueName]}
-                </Option>
-              )) : null}
-            </Select>
-          );
+        if (type === 'select' && item.pageCode) {
+          comp = this.getSearchSelectItem(item);
+        } else if (type === 'select') {
+          comp = this.getSelectItem(item);
+        } else if (type === 'date' && item.rangedate) {
+          comp = this.getRangeDateItem(item);
+        } else if (type === 'date') {
+          comp = this.getDateItem(item);
+        } else if (type === 'datetime' && item.rangedate) {
+          comp = this.getRangeDateItem(item, true);
+        } else if (type === 'datetime') {
+          comp = this.getDateItem(item, true);
         } else {
           comp = <Input placeholder={item.placeholder} />;
         }
         return comp;
       }
+      getSelectItem(item) {
+        return <Select
+                showSearch
+                notFoundContent='暂无数据'
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                style={{ width: 200 }}
+                placeholder="请选择">
+                {item.data ? item.data.map(d => (
+                  <Option key={d[item.keyName]} value={d[item.keyName]}>
+                    {d[item.valueName] ? d[item.valueName] : tempString(item.valueName, d)}
+                  </Option>
+                )) : null}
+              </Select>;
+      }
+      getSearchSelectItem(item) {
+        return <Select
+                mode="combobox"
+                // defaultActiveFirstOption={false}
+                showArrow={false}
+                filterOption={false}
+                optionLabelProp="children"
+                style={{ width: 200 }}
+                onChange={v => this.searchSelectChange(v, item)}
+                onPopupScroll={() => console.log(arguments)}
+                placeholder="请输入关键字搜索">
+                {item.data ? item.data.map(d => (
+                  <Option key={d[item.keyName]} value={d[item.keyName]}>
+                    {d[item.valueName] ? d[item.valueName] : tempString(item.valueName, d)}
+                  </Option>
+                )) : null}
+              </Select>;
+      }
+      getDateItem(item, isTime = false) {
+        let format = 'YYYY-MM-DD';
+        let places = '选择日期';
+        if (isTime) {
+          format = 'YYYY-MM-DD HH:mm:ss';
+          places = '选择时间';
+        }
+        return <DatePicker
+                allowClear={false}
+                locale={locale}
+                placeholder={places}
+                format={format}
+                showTime={isTime} />;
+      }
+      getRangeDateItem(item, isTime = false) {
+        let format = 'YYYY-MM-DD';
+        let places = ['开始日期', '结束日期'];
+        if (isTime) {
+          format = 'YYYY-MM-DD HH:mm:ss';
+          places = ['开始时间', '结束时间'];
+        }
+        return <RangePicker
+                allowClear={false}
+                locale={locale}
+                placeholder={places}
+                ranges={{ '今天': [moment(), moment()], '本月': [moment(), moment().endOf('month')] }}
+                format={format}
+                showTime={isTime} />;
+      }
       render() {
-  			return <WrapComponent {...this.props} buildList={this.buildList}></WrapComponent>;
-  		}
+        return <WrapComponent {...this.props} buildList={this.buildList}></WrapComponent>;
+      }
     }
   );
-}
+};

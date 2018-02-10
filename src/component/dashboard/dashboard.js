@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { Switch, Route, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -23,7 +23,7 @@ const Home = asyncComponent(() => import('../../container/home/home'));
   state => state.menu,
   { getMenuList, setTopCode, setSubMenuCode, setSubOpenCode, clearSubOpenCode, restoreSubOpenCode }
 )
-class Dashboard extends Component {
+class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

@@ -41,15 +41,15 @@ class MenuAddEdit extends React.Component {
     }, {
       title: '备注',
       field: 'remark',
-	    maxlength: 250
+      maxlength: 250
     }];
     return this.props.buildDetail({
       fields,
       code: this.code,
       view: this.view,
       detailCode: 805022,
-  		addCode: 805023,
-  		editCode: 805025
+      addCode: 805023,
+      editCode: 805025
     });
   }
 }

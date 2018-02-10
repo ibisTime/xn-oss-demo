@@ -31,9 +31,9 @@ class TextParam extends React.Component {
       formatter: (e, t) => {
         return t.type === 'richText'
           ? <div dangerouslySetInnerHTML={{__html: e}}></div>
-          : "VALID_TIME" === t.ckey
-              ? t.cvalue + "分钟"
-              : "weixinID" === t.ckey ? JSON.parse(t.cvalue).id : t.cvalue;
+          : t.ckey === 'VALID_TIME'
+              ? t.cvalue + '分钟'
+              : t.ckey === 'weixinID' ? JSON.parse(t.cvalue).id : t.cvalue;
       }
     }];
     return this.props.buildList({

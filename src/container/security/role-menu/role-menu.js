@@ -175,7 +175,7 @@ class RoleMenu extends React.Component {
           </FormItem>
         </Form>
       </Spin>
-    )
+    );
   }
 }
 

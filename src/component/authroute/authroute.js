@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import cookies from 'browser-cookies'
+import cookies from 'browser-cookies';
 
 @withRouter
 class AuthRoute extends React.Component {
@@ -11,7 +11,7 @@ class AuthRoute extends React.Component {
     this.props.history.push('/login');
   }
   render() {
-    return null
+    return null;
   }
 }
 

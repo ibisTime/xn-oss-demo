@@ -1,8 +1,8 @@
 import { getRoleMenuList } from 'api/menu';
 import { getRealUrl } from 'common/js/util';
 
-// const ROOT_CODE = 'COINSM201700000000000000';
-const ROOT_CODE = 'YLQSM201600000000000000';
+const ROOT_CODE = 'COINSM201700000000000000';
+// const ROOT_CODE = 'YLQSM201600000000000000';
 
 const SET_TOP_MENU_CODE = 'SET_TOP_MENU_CODE';
 const SET_SUB_MENU_CODE = 'SET_SUB_MENU_CODE';
@@ -23,7 +23,7 @@ const initState = {
   topMenuCode: '',
   subMenuCode: '',
   subOpenCode: []
-}
+};
 
 export function menu(state = initState, action) {
   switch(action.type) {
@@ -59,7 +59,7 @@ export function setSubOpenCode(code) {
 export function clearSubOpenCode() {
   return (dispatch, getState) => {
     preSubOpenCode = getState().menu.subOpenCode;
-    dispatch({ type: CLEAR_SUB_OPEN_CODE, payload: []});
+    dispatch({ type: CLEAR_SUB_OPEN_CODE, payload: [] });
   };
 }
 
@@ -77,7 +77,7 @@ export function getMenuList(pathname) {
     getRoleMenuList().then(data => {
       dispatch(setMenuList({ data, pathname }));
     }).catch(() => {});
-  }
+  };
 }
 
 function _getMenuState({ data, pathname }) {
@@ -166,7 +166,7 @@ function getSubCode(code, state) {
     subOpenCode: [state.top2SubObj[code][0].code],
     subMenuCode: state.top2SubObj[code][0].children ? state.top2SubObj[code][0].children[0].code : '',
     subMenuList: state.top2SubObj[code]
-  }
+  };
 }
 
 function getSubOpenCode(code, state) {

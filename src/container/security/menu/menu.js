@@ -35,7 +35,7 @@ class Menu extends React.Component {
       listCode: '805001',
       params: { type: 1 },
       keyName: 'code',
-      valueName: ['code', 'name'],
+      valueName: '{{code.DATA}} {{name.DATA}}',
       search: true
     }, {
       title: '类型',

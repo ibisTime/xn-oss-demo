@@ -9,6 +9,11 @@ import { publicBanner } from './redux/public/banner';
 import { publicBannerAddEdit } from './redux/public/banner-addedit';
 import { generalTextParam } from './redux/general/text-param';
 import { generalTextParamAddEdit } from './redux/general/text-param-addedit';
+import { financeAccount } from './redux/finance/account';
+import { financeLedger } from './redux/finance/ledger';
+import { financeLedgerAddEdit } from '@redux/finance/ledger-addedit';
+import { financePlatformLedger } from '@redux/finance/platform-ledger';
+import { financeDistAddr } from '@redux/finance/dist-addr';
 
 export default combineReducers({
   user,
@@ -20,5 +25,10 @@ export default combineReducers({
   publicBanner,
   publicBannerAddEdit,
   generalTextParam,
-  generalTextParamAddEdit
+  generalTextParamAddEdit,
+  financeAccount,
+  financeLedger,
+  financeLedgerAddEdit,
+  financePlatformLedger,
+  financeDistAddr
 });
