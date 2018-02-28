@@ -148,28 +148,51 @@ export function moneyParse(money, rate = 1000) {
 }
 
 /**
+ * 大数相乘
+ * @param a
+ * @param b
+ */
+export function multiply(a, b) {
+  if (a && b) {
+    let _a = new BigDecimal(a);
+    var _b = new BigDecimal(b);
+    return _a.multiply(_b).toString();
+  }
+  return '';
+}
+
+/**
+ * 格式化文件地址
+ * @param urls
+ * @param suffix
+ */
+export function formatFile(urls, suffix = '') {
+  if(!urls) {
+    return '';
+  }
+  let url = urls.split(/\|\|/)[0];
+  if (!/^http|^data:image/i.test(url)) {
+    let index = url.indexOf('?imageMogr2');
+    if (index !== -1) {
+      suffix = url.substr(index);
+      url = url.substr(0, index);
+    }
+    url = PIC_PREFIX + encodeURIComponent(url) + suffix;
+  }
+  return url;
+}
+
+/**
  * 格式化图片地址
  * @param imgs
  * @param suffix
  */
 export function formatImg(imgs, suffix = '?imageMogr2/auto-orient') {
-  if(!imgs) {
-    return '';
-  }
-  let img = imgs.split(/\|\|/)[0];
-  if (!/^http|^data:image/i.test(img)) {
-    let index = img.indexOf('?imageMogr2');
-    if (index !== -1) {
-      suffix = img.substr(index);
-      img = img.substr(0, index);
-    }
-    img = PIC_PREFIX + encodeURIComponent(img) + suffix;
-  }
-  return img;
+  return formatFile(imgs, suffix);
 }
 
 export function isUndefined(value) {
-  return value === undefined || value === null;
+  return value === undefined || value === null || value === '';
 }
 
 export function tempString(str, data) {
@@ -192,7 +215,7 @@ export function showSucMsg(msg, time = 2) {
 }
 
 export function showErrMsg(msg, time = 2) {
-  showMsg(msg, 'success', time);
+  showMsg(msg, 'error', time);
 }
 
 export function showConfirm({ okType = 'primary', onOk, onCancel }) {

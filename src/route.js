@@ -2,6 +2,27 @@ import asyncComponent from './component/async-component/async-component';
 
 const ROUTES = [
   {
+    path: '/system/role',
+    component: asyncComponent(() => import('container/security/role/role'))
+  },
+  {
+    path: '/system/role/addedit',
+    component: asyncComponent(() => import('container/security/role-addedit/role-addedit'))
+  },
+  {
+    path: '/system/menu',
+    component: asyncComponent(() => import('container/security/menu/menu'))
+  },
+  {
+    path: '/system/menu/addedit',
+    component: asyncComponent(() => import('container/security/menu-addedit/menu-addedit'))
+  },
+  {
+    path: '/public/aboutus_addedit',
+    component: asyncComponent(() => import('container/public/aboutus-addedit/aboutus-addedit'))
+  },
+
+  {
     path: '/security/role',
     component: asyncComponent(() => import('container/security/role/role'))
   },
@@ -39,18 +60,6 @@ const ROUTES = [
   },
 
   {
-    path: '/system/role',
-    component: asyncComponent(() => import('container/security/role/role'))
-  },
-  {
-    path: '/system/menu',
-    component: asyncComponent(() => import('container/security/menu/menu'))
-  },
-  {
-    path: '/system/menu/addedit',
-    component: asyncComponent(() => import('container/security/menu-addedit/menu-addedit'))
-  },
-  {
     path: '/finance/breakBalance',
     component: asyncComponent(() => import('container/finance/account/account'))
   },
@@ -73,6 +82,10 @@ const ROUTES = [
   {
     path: '/finance/diviAddress',
     component: asyncComponent(() => import('container/finance/dist-addr/dist-addr'))
+  },
+  {
+    path: '/finance/diviAddress/ledger',
+    component: asyncComponent(() => import('container/finance/dist-addr-ledger/dist-addr-ledger'))
   }
 ];
 

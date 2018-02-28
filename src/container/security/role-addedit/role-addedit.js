@@ -9,6 +9,7 @@ import {
 } from '@redux/security/role-addedit';
 import { getQueryString } from 'common/js/util';
 import { DetailWrapper } from 'common/js/build-detail';
+import { COMPANY_CODE } from 'common/js/config';
 
 @DetailWrapper(
   state => state.securityRoleAddEdit,
@@ -35,9 +36,7 @@ class MenuAddEdit extends React.Component {
       field: 'level',
       required: true,
       type: 'select',
-      key: 'role_level',
-      keyName: 'dkey',
-      valueName: 'dvalue'
+      key: 'role_level'
     }, {
       title: '备注',
       field: 'remark',

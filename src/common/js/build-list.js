@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Form, Select, DatePicker, Input, Button, Table } from 'antd';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import { moneyFormat, dateTimeFormat, dateFormat, tempString, showWarnMsg, showSucMsg, showDelConfirm } from 'common/js/util';
+import { moneyFormat, dateTimeFormat, dateFormat, tempString,
+  showWarnMsg, showSucMsg, showDelConfirm } from 'common/js/util';
 import { getOwnerBtns } from 'api/menu';
 import { getDictList } from 'api/dict';
 import fetch from 'common/js/fetch';
@@ -13,6 +14,8 @@ moment.locale('zh-cn');
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
+const DATE_FORMAT = 'YYYY-MM-DD';
+const DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
   return (
@@ -33,6 +36,65 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
           singleSelect: true,
           searchParams: {}
         };
+      }
+      buildList = (options) => {
+        this.options = {
+          ...this.options,
+          ...options
+        };
+        if (this.first) {
+          this.options.pageCode && this.getPageData();
+          if (this.options.buttons) {
+            this.addOwnerBtns();
+          } else if (this.props.parentCode) {
+            this.getOwnerBtns();
+          }
+        }
+        const columns = [];
+        const searchFields = [];
+        this.options.fields.forEach(f => {
+          f.search && searchFields.push(f);
+          let obj = {
+            title: f.title,
+            dataIndex: f.field
+          };
+          if (f.type === 'datetime') {
+            obj.render = dateTimeFormat;
+          } else if (f.type === 'date') {
+            obj.render = dateFormat;
+          } else if (f.type === 'select') {
+            if (f.key) {
+              f.keyName = f.keyName || 'dkey';
+              f.valueName = f.valueName || 'dvalue';
+            }
+            if (!f.data) {
+              f.data = this.props.searchData[f.field];
+              this.first && this.getSelectData(f);
+            } else if (!this.props.searchData[f.field]) {
+              this.props.setSearchData({ data: f.data, key: f.field });
+            }
+            obj.render = (value) => {
+              if (value && f.data) {
+                let item = f.data.find(v => v[f.keyName] === value);
+                return item
+                  ? item[f.valueName]
+                    ? item[f.valueName]
+                    : tempString(f.valueName, item)
+                  : '';
+              }
+              return '';
+            };
+          }
+          if (f.formatter) {
+            obj.render = f.formatter;
+          } else if (f.amount) {
+            obj.render = (v, d) => <span style={{whiteSpace: 'nowrap'}}>{moneyFormat(v, d)}</span>;
+          }
+          columns.push(obj);
+        });
+        this.first = false;
+        this.columns = columns;
+        return this.getPageComponent(searchFields);
       }
       onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({ selectedRowKeys, selectedRows });
@@ -89,13 +151,16 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
       getRealSearchParams(params) {
         let result = {};
         this.options.fields.forEach(v => {
-          if (v.rangedate && params[v.field]) {
-            let format = v.type === 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss';
-            v.rangedate.forEach((d, index) => {
-              result[d] = params[v.field][index].format(format);
-            });
+          let format = v.type === 'date' ? DATE_FORMAT : DATETIME_FORMAT;
+          if (v.rangedate) {
+            let bDate = params[v.field] ? [...params[v.field]] : [];
+            if (bDate.length) {
+              v.rangedate.forEach((d, index) => {
+                result[d] = bDate[index].format(format);
+              });
+            }
           } else {
-            result[v.field] = params[v.field];
+            result[v.field] = params[v.field] ? params[v.field].format(format) : params[v.field];
           }
         });
         return result;
@@ -162,65 +227,6 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
       handleTableChange = (pagination) => {
         this.getPageData(pagination.current);
       }
-      buildList = (options) => {
-        this.options = {
-          ...this.options,
-          ...options
-        };
-        if (this.first) {
-          this.options.pageCode && this.getPageData();
-          if (this.options.buttons) {
-            this.addOwnerBtns();
-          } else if (this.props.parentCode) {
-            this.getOwnerBtns();
-          }
-        }
-        const columns = [];
-        const searchFields = [];
-        this.options.fields.forEach(f => {
-          f.search && searchFields.push(f);
-          let obj = {
-            title: f.title,
-            dataIndex: f.field
-          };
-          if (f.type === 'datetime') {
-            obj.render = dateTimeFormat;
-          } else if (f.type === 'date') {
-            obj.render = dateFormat;
-          } else if (f.type === 'select') {
-            if (f.key) {
-              f.keyName = f.keyName || 'dkey';
-              f.valueName = f.valueName || 'dvalue';
-            }
-            if (!f.data) {
-              f.data = this.props.searchData[f.field];
-              this.first && this.getSelectData(f);
-            } else if (!this.props.searchData[f.field]) {
-              this.props.setSearchData({ data: f.data, key: f.field });
-            }
-            obj.render = (value) => {
-              if (value && f.data) {
-                let item = f.data.find(v => v[f.keyName] === value);
-                return item
-                  ? item[f.valueName]
-                    ? item[f.valueName]
-                    : tempString(f.valueName, item)
-                  : '';
-              }
-              return '';
-            };
-          }
-          if (f.formatter) {
-            obj.render = f.formatter;
-          } else if (f.amount) {
-            obj.render = (v, d) => <span style={{whiteSpace: 'nowrap'}}>{moneyFormat(v, d)}</span>;
-          }
-          columns.push(obj);
-        });
-        this.first = false;
-        this.columns = columns;
-        return this.getPageComponent(searchFields);
-      }
       // 获取select框的数据
       getSelectData(item) {
         if (item.key) {
@@ -232,8 +238,6 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
           fetch(item.listCode, param).then(data => {
             this.props.setSearchData({ data, key: item.field });
           }).catch(() => {});
-        } else if (item.pageCode) {
-          // this.searchSelectChange('', item);
         }
       }
       getOwnerBtns() {
@@ -254,6 +258,7 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
         this.options.btnEvent = btnEvent;
         this.props.setBtnList(btns);
       }
+      // 获取页面初始化数据
       getPageData(current = this.props.pagination.current, searchParam) {
         if (searchParam) {
           this.props.setSearchParam(searchParam);
@@ -341,23 +346,16 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
         return children;
       }
       getItemByType(type, item) {
-        let comp;
-        if (type === 'select' && item.pageCode) {
-          comp = this.getSearchSelectItem(item);
-        } else if (type === 'select') {
-          comp = this.getSelectItem(item);
-        } else if (type === 'date' && item.rangedate) {
-          comp = this.getRangeDateItem(item);
-        } else if (type === 'date') {
-          comp = this.getDateItem(item);
-        } else if (type === 'datetime' && item.rangedate) {
-          comp = this.getRangeDateItem(item, true);
-        } else if (type === 'datetime') {
-          comp = this.getDateItem(item, true);
-        } else {
-          comp = <Input placeholder={item.placeholder} />;
+        switch(type) {
+          case 'select':
+            return item.pageCode ? this.getSearchSelectItem(item) : this.getSelectItem(item);
+          case 'date':
+            return item.rangedate ? this.getRangeDateItem(item) : this.getDateItem(item);
+          case 'datetime':
+            return item.rangedate ? this.getRangeDateItem(item, true) : this.getDateItem(item, true);
+          default:
+            return <Input style={{ width: 200 }} placeholder={item.placeholder} />;
         }
-        return comp;
       }
       getSelectItem(item) {
         return <Select
@@ -377,13 +375,11 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
       getSearchSelectItem(item) {
         return <Select
                 mode="combobox"
-                // defaultActiveFirstOption={false}
                 showArrow={false}
                 filterOption={false}
+                onSearch={v => this.searchSelectChange(v, item)}
                 optionLabelProp="children"
                 style={{ width: 200 }}
-                onChange={v => this.searchSelectChange(v, item)}
-                onPopupScroll={() => console.log(arguments)}
                 placeholder="请输入关键字搜索">
                 {item.data ? item.data.map(d => (
                   <Option key={d[item.keyName]} value={d[item.keyName]}>
@@ -393,10 +389,10 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
               </Select>;
       }
       getDateItem(item, isTime = false) {
-        let format = 'YYYY-MM-DD';
+        let format = DATE_FORMAT;
         let places = '选择日期';
         if (isTime) {
-          format = 'YYYY-MM-DD HH:mm:ss';
+          format = DATETIME_FORMAT;
           places = '选择时间';
         }
         return <DatePicker
@@ -407,10 +403,10 @@ export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps
                 showTime={isTime} />;
       }
       getRangeDateItem(item, isTime = false) {
-        let format = 'YYYY-MM-DD';
+        let format = DATE_FORMAT;
         let places = ['开始日期', '结束日期'];
         if (isTime) {
-          format = 'YYYY-MM-DD HH:mm:ss';
+          format = DATETIME_FORMAT;
           places = ['开始时间', '结束时间'];
         }
         return <RangePicker

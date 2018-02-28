@@ -59,10 +59,6 @@ class BannerAddEdit extends React.Component {
       field: 'location',
       type: 'select',
       key: 'banner_location',
-      data: [{
-        dkey: 'index_banner',
-        dvalue: '首页'
-      }],
       required: true
     }, {
       title: '顺序',

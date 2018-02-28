@@ -69,3 +69,7 @@ body {
 .detail-form-wrapper .ant-upload-list-item-done .ant-upload-list-item-info > span {
   height: 100%;
 }
+
+.build-modal-detail .detail-form-wrapper {
+  width: auto;
+}
