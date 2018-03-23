@@ -63,97 +63,96 @@
 				};
 			}, 1);
 		}
-	});
 
-	function getProvince() { //获取省数据
-		//在jquery中使用标签名来查找对应标签，利用find()方法，传入标签名
-
-		var temp_html = select_prehtml;
-
-		$provinceXmlElements.each(function(i, d) {
-
-			temp_html += "<option value='" + $(d).attr("name") + "'>" + $(d).attr("name") + "</option>";
-
-		});
-
-		prov_obj.html(temp_html);
-	}
-
-	function getCity(val) { //获取市数据
-
-		var temp_html = select_prehtml;
-
-		$provinceXmlElements.each(function(i, d) {
-
-			var $provinceXmlValue = $(d).attr("name"); //遍历的省
-
-			if(val == $provinceXmlValue) {
-
-				$cityXmlELements = $(d).find("city"); //选中的省下面的市
-
-				$cityXmlELements.each(function(index, domEle) {
-
-					var $cityXmlValue = $(domEle).attr("name");
-
-					temp_html += "<option value='" + $cityXmlValue + "'>" + $cityXmlValue + "</option>";
-
-				});
-			}
-		});
-
-		city_obj.html(temp_html);
-
-	}
-
-	function getDistrict(val) { //获取区数据
-
-		var temp_html = select_prehtml;
-
-		if($cityXmlELements) {
-			$cityXmlELements.each(function(i, d) {
-
-				var $cityXmlValue = $(d).attr("name"); //遍历的省
-
-				if(val == $cityXmlValue) {
-
-					$districtXmlELements = $(d).find("district"); //选中的省下面的市
-
-					$districtXmlELements.each(function(index, domEle) {
-
-						var $districtXmlValue = $(domEle).attr("name");
-
-						temp_html += "<option value='" + $districtXmlValue + "'>" + $districtXmlValue + "</option>";
-
+		function getProvince() { //获取省数据
+			//在jquery中使用标签名来查找对应标签，利用find()方法，传入标签名
+	
+			var temp_html = select_prehtml;
+	
+			$provinceXmlElements.each(function(i, d) {
+	
+				temp_html += "<option value='" + $(d).attr("name") + "'>" + $(d).attr("name") + "</option>";
+	
+			});
+	
+			prov_obj.html(temp_html);
+		}
+	
+		function getCity(val) { //获取市数据
+	
+			var temp_html = select_prehtml;
+	
+			$provinceXmlElements.each(function(i, d) {
+	
+				var $provinceXmlValue = $(d).attr("name"); //遍历的省
+	
+				if(val == $provinceXmlValue) {
+	
+					$cityXmlELements = $(d).find("city"); //选中的省下面的市
+	
+					$cityXmlELements.each(function(index, domEle) {
+	
+						var $cityXmlValue = $(domEle).attr("name");
+	
+						temp_html += "<option value='" + $cityXmlValue + "'>" + $cityXmlValue + "</option>";
+	
 					});
 				}
 			});
+	
+			city_obj.html(temp_html);
+	
 		}
-
-		dist_obj.html(temp_html);
-
-	}
-
-	prov_obj.bind("change", function() {
-		var $provinceValue = prov_obj.val(); //选中的省
-
-		//清空
-		city_obj.empty();
-		dist_obj.empty();
-		dist_obj.trigger('chosen:updated');
-
-		if(!onlyProvince) {
-			getCity($provinceValue);
+	
+		function getDistrict(val) { //获取区数据
+	
+			var temp_html = select_prehtml;
+	
+			if($cityXmlELements) {
+				$cityXmlELements.each(function(i, d) {
+	
+					var $cityXmlValue = $(d).attr("name"); //遍历的省
+	
+					if(val == $cityXmlValue) {
+	
+						$districtXmlELements = $(d).find("district"); //选中的省下面的市
+	
+						$districtXmlELements.each(function(index, domEle) {
+	
+							var $districtXmlValue = $(domEle).attr("name");
+	
+							temp_html += "<option value='" + $districtXmlValue + "'>" + $districtXmlValue + "</option>";
+	
+						});
+					}
+				});
+			}
+	
+			dist_obj.html(temp_html);
+	
 		}
-	});
-
-	city_obj.bind("change", function() {
-		var $cityValue = city_obj.val();
-
-		//清空
-		dist_obj.empty();
-
-		getDistrict($cityValue)
-	});
-
-};
+	
+		prov_obj.bind("change", function() {
+			var $provinceValue = prov_obj.val(); //选中的省
+	
+			//清空
+			city_obj.empty();
+			dist_obj.empty();
+			dist_obj.trigger('chosen:updated');
+	
+			if(!onlyProvince) {
+				getCity($provinceValue);
+			}
+		});
+	
+		city_obj.bind("change", function() {
+			var $cityValue = city_obj.val();
+	
+			//清空
+			dist_obj.empty();
+	
+			getDistrict($cityValue)
+		});
+	
+	};
 })(jQuery);
