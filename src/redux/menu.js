@@ -1,8 +1,9 @@
 import { getRoleMenuList } from 'api/menu';
 import { getRealUrl } from 'common/js/util';
 
-const ROOT_CODE = 'COINSM201700000000000000';
+// const ROOT_CODE = 'COINSM201700000000000000';
 // const ROOT_CODE = 'YLQSM201600000000000000';
+const ROOT_CODE = 'HYSM201700000000000000';
 
 const SET_TOP_MENU_CODE = 'SET_TOP_MENU_CODE';
 const SET_SUB_MENU_CODE = 'SET_SUB_MENU_CODE';

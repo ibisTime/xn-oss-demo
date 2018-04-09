@@ -60,6 +60,47 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
         Object.keys(this.textareas).forEach(v => {
           let elem = document.getElementById(v);
           this.textareas[v].editor = new E(elem);
+          console.log(this.textareas[v].editor);
+          // this.textareas[v].editor.config.menus = [
+          //   'source',
+          //   '|',
+          //   'bold',
+          //   'underline',
+          //   'italic',
+          //   'strikethrough',
+          //   'eraser',
+          //   'forecolor',
+          //   'bgcolor',
+          //   '|',
+          //   'quote',
+          //   'fontfamily',
+          //   'fontsize',
+          //   'head',
+          //   'indent',
+          //   'lineheight',
+          //   'symbol',
+          //   '|',
+          //   'alignleft',
+          //   'aligncenter',
+          //   'alignright',
+          //   '|',
+          //   'link',
+          //   'unlink',
+          //   'table',
+          //   'emotion',
+          //   '|',
+          //   'img',
+          //   'video',
+          //   'location',
+          //   'insertcode',
+          //   '|',
+          //   'undo',
+          //   'redo',
+          //   'fullscreen'
+          // ];
+          // this.textareas[v].editor.config.printLog = false;
+          // this.textareas[v].editor.config.menuFixed = false;
+          // this.textareas[v].editor.config.hideLinkImg = true;
           this.textareas[v].editor.customConfig.onchange = html => {
             let result = {};
             if (!html) {

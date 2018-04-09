@@ -6,11 +6,11 @@ import { COMPANY_CODE } from 'common/js/config';
  * @param parentKey
  * @param bizType
  */
-export function getDictList({ parentKey, bizType = 660906 }) {
+export function getDictList({ parentKey, bizType = 805906 }) {
   if (getDictList[parentKey]) {
     return Promise.resolve(getDictList[parentKey]);
   }
-  // 625907
+  // 625907/805906
   return fetch(bizType, {
     parentKey,
     companyCode: COMPANY_CODE
