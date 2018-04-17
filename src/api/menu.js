@@ -6,7 +6,8 @@ import { getRoleCode } from 'common/js/util';
  * @param parentKey
  */
 export function getOwnerBtns(parentCode) {
-  return fetch(805026, {
+  // 805026
+  return fetch(627056, {
     parentCode,
     roleCode: getRoleCode(),
     type: 2
@@ -24,7 +25,8 @@ export function getMenuBtnList() {
  * 根据角色列表获取菜单
  */
 export function getRoleMenuList() {
-  return fetch(805026, {
+  // 805026
+  return fetch(627056, {
     type: 1,
     roleCode: getRoleCode()
   });

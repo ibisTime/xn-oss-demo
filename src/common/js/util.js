@@ -28,7 +28,7 @@ export function getUserId() {
 export function setRoleInfo({ roleCode, kind, level, loginName }) {
   cookies.set('roleCode', roleCode);
   cookies.set('loginKind', kind);
-  cookies.set('roleLevel', level);
+  // cookies.set('roleLevel', level);
   cookies.set('userName', loginName);
 }
 

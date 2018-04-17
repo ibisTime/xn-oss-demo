@@ -1,9 +1,6 @@
 import { getRoleMenuList } from 'api/menu';
 import { getRealUrl } from 'common/js/util';
-
-// const ROOT_CODE = 'COINSM201700000000000000';
-// const ROOT_CODE = 'YLQSM201600000000000000';
-const ROOT_CODE = 'HYSM201700000000000000';
+import { ROOT_MENU_CODE } from 'common/js/config';
 
 const SET_TOP_MENU_CODE = 'SET_TOP_MENU_CODE';
 const SET_SUB_MENU_CODE = 'SET_SUB_MENU_CODE';
@@ -122,7 +119,7 @@ function getFilterList(result, data) {
   data.forEach(v => {
     if (v.parentCode) {
       result.menus[v.code] = v;
-      if (v.parentCode === ROOT_CODE) {
+      if (v.parentCode === ROOT_MENU_CODE) {
         result.topMenuList.push(v);
         result.top2SubObj[v.code] = [];
       } else {

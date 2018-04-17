@@ -58,7 +58,14 @@ class BannerAddEdit extends React.Component {
       title: '位置',
       field: 'location',
       type: 'select',
-      key: 'banner_location',
+      // key: 'banner_location',
+      data: [{
+        dkey: 'index_banner',
+        dvalue: '首页'
+      }],
+      keyName: 'dkey',
+      valueName: 'dvalue',
+      value: 'index_banner',
       required: true
     }, {
       title: '顺序',
@@ -83,9 +90,9 @@ class BannerAddEdit extends React.Component {
       fields,
       code: this.code,
       view: this.view,
-      detailCode: 805807,
-      addCode: 805800,
-      editCode: 805802
+      detailCode: 627037,
+      addCode: 627030,
+      editCode: 627032
     });
   }
 }

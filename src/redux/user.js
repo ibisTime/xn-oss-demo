@@ -1,5 +1,6 @@
 import fetch from 'common/js/fetch';
 import { setUser, getUserId, setRoleInfo } from 'common/js/util';
+import { COMPANY_CODE } from 'common/js/config';
 
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGOUT = 'LOGOUT';
@@ -70,10 +71,12 @@ export function getUser() {
 export function login({ loginName, loginPwd }) {
   return dispatch => {
     dispatch(doFetching());
-    fetch(805050, {
+    // 805050
+    fetch(627300, {
       loginName,
       loginPwd,
-      kind: 'P'
+      kind: 'P',
+      companyCode: COMPANY_CODE
     }).then(data => {
       setUser(data);
       dispatch(loginSuccess());
@@ -89,7 +92,8 @@ export function login({ loginName, loginPwd }) {
 }
 
 function _getUser() {
-  return fetch(805121, {
+  // 805121
+  return fetch(627230, {
     userId: getUserId()
   });
 }

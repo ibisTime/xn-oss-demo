@@ -19,6 +19,9 @@ import fetch from 'common/js/fetch';
 class AboutusAddEdit extends React.Component {
   render() {
     const fields = [{
+      field: 'id',
+      hidden: true
+    }, {
       field: 'remark',
       value: '关于我们',
       hidden: true
@@ -32,13 +35,13 @@ class AboutusAddEdit extends React.Component {
       fields,
       key: 'ckey',
       code: 'about_us',
-      detailCode: 660917,
+      detailCode: 627087,
       buttons: [{
         title: '保存',
         check: true,
         handler: (params) => {
           this.props.doFetching();
-          fetch(660911, params).then(() => {
+          fetch(627081, params).then(() => {
             showSucMsg('操作成功');
             this.props.cancelFetching();
           }).catch(this.props.cancelFetching);

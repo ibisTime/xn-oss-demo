@@ -9,7 +9,7 @@ import { getDictList } from 'api/dict';
 import { getQiniuToken } from 'api/general';
 import { formatFile, formatImg, isUndefined, dateTimeFormat, dateFormat,
   tempString, moneyFormat, moneyParse, showSucMsg, showErrMsg } from 'common/js/util';
-import { UPLOAD_URL, formItemLayout, tailFormItemLayout } from './config';
+import { UPLOAD_URL, PIC_PREFIX, formItemLayout, tailFormItemLayout } from './config';
 import fetch from 'common/js/fetch';
 import cityData from 'common/js/lib/city';
 import locale from './lib/date-locale';
@@ -57,51 +57,24 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
         this.textareas = {};
       }
       componentDidMount() {
+        let _this = this;
         Object.keys(this.textareas).forEach(v => {
           let elem = document.getElementById(v);
-          this.textareas[v].editor = new E(elem);
-          console.log(this.textareas[v].editor);
-          // this.textareas[v].editor.config.menus = [
-          //   'source',
-          //   '|',
-          //   'bold',
-          //   'underline',
-          //   'italic',
-          //   'strikethrough',
-          //   'eraser',
-          //   'forecolor',
-          //   'bgcolor',
-          //   '|',
-          //   'quote',
-          //   'fontfamily',
-          //   'fontsize',
-          //   'head',
-          //   'indent',
-          //   'lineheight',
-          //   'symbol',
-          //   '|',
-          //   'alignleft',
-          //   'aligncenter',
-          //   'alignright',
-          //   '|',
-          //   'link',
-          //   'unlink',
-          //   'table',
-          //   'emotion',
-          //   '|',
-          //   'img',
-          //   'video',
-          //   'location',
-          //   'insertcode',
-          //   '|',
-          //   'undo',
-          //   'redo',
-          //   'fullscreen'
-          // ];
-          // this.textareas[v].editor.config.printLog = false;
-          // this.textareas[v].editor.config.menuFixed = false;
-          // this.textareas[v].editor.config.hideLinkImg = true;
-          this.textareas[v].editor.customConfig.onchange = html => {
+          _this.textareas[v].editor = new E(elem);
+          _this.textareas[v].editor.customConfig.uploadFileName = 'file';
+          _this.textareas[v].editor.customConfig.uploadImgMaxSize = 10 * 1024 * 1024;
+          _this.textareas[v].editor.customConfig.showLinkImg = false;
+          _this.textareas[v].editor.customConfig.uploadImgHooks = {
+            customInsert: (insertLinkImg, result) => {
+              insertLinkImg(PIC_PREFIX + result.key);
+            },
+            before: (formdata, xhr, editor, file) => {
+              formdata.append('token', _this.state.token);
+              formdata.append('key', file.name + '_' + new Date().getTime());
+            }
+          };
+          _this.textareas[v].editor.customConfig.uploadImgServer = 'http://up-z2.qiniu.com';
+          _this.textareas[v].editor.customConfig.onchange = html => {
             let result = {};
             if (!html) {
               result = {
@@ -114,15 +87,15 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
                 errorMsg: ''
               };
             }
-            this.setState({
+            _this.setState({
               textareas: {
-                ...this.state.textareas,
+                ..._this.state.textareas,
                 [v]: result
               }
             });
-            this.textareas[v].editorContent = html;
+            _this.textareas[v].editorContent = html;
           };
-          this.textareas[v].editor.create();
+          _this.textareas[v].editor.create();
         });
       }
       componentWillUnmount() {
@@ -579,6 +552,8 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
         );
       }
       getTextArea(item, initVal, rules, getFieldDecorator) {
+        const { token } = this.state;
+        !token && this.getToken();
         this.textareas[item.field] = this.textareas[item.field] || {};
         if (this.options.code && initVal && !this.textareas[item.field].editorContent &&
           this.textareas[item.field].editor && !this.textareas[item.field].initFlag) {
@@ -647,7 +622,7 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
           if (item.formatter) {
             result = item.formatter(result, this.props.pageData);
           } else if (item.amount) {
-            result = moneyFormat(result, item.amountRate);
+            result = isUndefined(result) ? '' : moneyFormat(result, item.amountRate);
           }
         } catch(e) {}
         return isUndefined(result) ? '' : result; // this.options.view ? '' :

@@ -11,8 +11,9 @@ export default function fetch(code, param = {}) {
 
   const data = {
     systemCode: SYSTEM_CODE,
-    token: cookies.get('token'),
-    // updater: cookies.get('userName'),
+    companyCode: SYSTEM_CODE,
+    token: cookies.get('token') || '',
+    updater: cookies.get('userName'),
     ...param
   };
 

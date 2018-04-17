@@ -6,7 +6,7 @@ import { COMPANY_CODE } from 'common/js/config';
  * @param parentKey
  * @param bizType
  */
-export function getDictList({ parentKey, bizType = 805906 }) {
+export function getDictList({ parentKey, bizType = 627076 }) {
   if (getDictList[parentKey]) {
     return Promise.resolve(getDictList[parentKey]);
   }
