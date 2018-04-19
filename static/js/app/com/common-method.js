@@ -1952,6 +1952,8 @@ function buildDetail(options) {
                 }, 100);
             })(i);
         }
+        
+        hideLoading();
     }
 
     if (!window.parent.frames[1]) {
