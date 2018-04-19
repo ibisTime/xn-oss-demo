@@ -71,7 +71,7 @@ class Ledger extends React.Component {
       field: 'createDatetime',
       type: 'date',
       rangedate: ['dateStart', 'dateEnd'],
-      formatter: dateTimeFormat,
+      render: dateTimeFormat,
       search: true
     }];
     return this.props.buildList({

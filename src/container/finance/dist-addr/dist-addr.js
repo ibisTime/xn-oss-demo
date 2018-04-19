@@ -45,7 +45,7 @@ class DistAddr extends React.Component {
       keyName: 'userId',
       valueName: '{{mobile.DATA}}--{{nickname.DATA}}',
       searchName: 'mobile',
-      formatter: (v, data) => {
+      render: (v, data) => {
         if (data.user) {
           return data.user.mobile + '--' + data.user.nickname;
         }

@@ -28,7 +28,7 @@ class TextParam extends React.Component {
     }, {
       field: 'cvalue',
       title: '参数值',
-      formatter: (e, t) => {
+      render: (e, t) => {
         return t.type === 'richText'
           ? <div dangerouslySetInnerHTML={{__html: e}}></div>
           : t.ckey === 'VALID_TIME'

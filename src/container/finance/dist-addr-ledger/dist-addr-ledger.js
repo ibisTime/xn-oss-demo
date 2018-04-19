@@ -31,11 +31,11 @@ class DistAddrLedger extends React.Component {
     }, {
       title: '交易金额',
       field: 'value',
-      formatter: (v, data) => data.from === this.address ? '-' + moneyFormat(v) : moneyFormat(v)
+      render: (v, data) => data.from === this.address ? '-' + moneyFormat(v) : moneyFormat(v)
     }, {
       title: '对方地址',
       field: 'fromTo',
-      formatter: (v, data) => data.from === this.address ? data.to : data.from
+      render: (v, data) => data.from === this.address ? data.to : data.from
     }, {
       title: 'gasLimit',
       field: 'gas'
@@ -49,7 +49,7 @@ class DistAddrLedger extends React.Component {
     }, {
       title: '矿工费',
       field: 'kgPrice',
-      formatter: (v, data) => moneyFormat(multiply(data.gasPrice, data.gasUsed))
+      render: (v, data) => moneyFormat(multiply(data.gasPrice, data.gasUsed))
     }, {
       title: '关联订单号',
       field: 'refNo'
