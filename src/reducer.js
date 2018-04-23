@@ -18,6 +18,8 @@ import { financePlatformLedger } from '@redux/finance/platform-ledger';
 import { financeDistAddr } from '@redux/finance/dist-addr';
 import { financeDistAddrLedger } from '@redux/finance/dist-addr-ledger';
 
+import { creditAddEdit } from '@redux/demo/credit-addedit';
+
 export default combineReducers({
   user,
   menu,
@@ -36,5 +38,7 @@ export default combineReducers({
   financeLedgerAddEdit,
   financePlatformLedger,
   financeDistAddr,
-  financeDistAddrLedger
+  financeDistAddrLedger,
+
+  creditAddEdit
 });

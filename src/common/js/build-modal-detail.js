@@ -53,7 +53,6 @@ export default class ModalDetail extends React.Component {
     } else {
       options.onCancel = this.handleCancel;
     }
-    console.log('mo', this);
     return (
       <Modal
         className="build-modal-detail"

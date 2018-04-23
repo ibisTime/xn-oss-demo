@@ -86,6 +86,11 @@ const ROUTES = [
   {
     path: '/finance/diviAddress/ledger',
     component: asyncComponent(() => import('container/finance/dist-addr-ledger/dist-addr-ledger'))
+  },
+// demo
+  {
+    path: '/demo/credit/addedit',
+    component: asyncComponent(() => import('container/demo/credit-addedit'))
   }
 ];
 

@@ -151,7 +151,7 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
         values[this.options.key || 'code'] = this.props.code || '';
         this.options.fields.forEach(v => {
           if (v.amount) {
-            values[v.field] = moneyParse(v.amount, v.amountRate);
+            values[v.field] = moneyParse(values[v.field], v.amountRate);
           } else if (v.type === 'citySelect') {
             let mid = values[v.field].map(a => a === '全部' ? '' : a);
             v.cFields.forEach((f, i) => {
@@ -169,6 +169,8 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
             } else {
               values[v.field] = values[v.field] ? values[v.field].format(format) : values[v.field];
             }
+          } else if (v.type === 'o2m') {
+            values[v.field] = this.props.pageData[v.field];
           }
         });
         return values;
@@ -245,16 +247,18 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
         }
       }
       getUploadData = (file) => {
-        const { token } = this.state;
-        let sourceLink = file.name;
-        let idx = sourceLink.lastIndexOf('.');
-        let name = sourceLink.slice(0, idx);
-        let suffix = sourceLink.slice(idx + 1);
-        name = name + '_' + new Date().getTime();
-        return {
-          token,
-          key: name + '.' + suffix
-        };
+        return { token: this.state.token };
+        // const { token } = this.state;
+        // let sourceLink = file.name;
+        // let idx = sourceLink.lastIndexOf('.');
+        // let name = sourceLink.slice(0, idx);
+        // let suffix = sourceLink.slice(idx + 1);
+        // name = name + '_' + new Date().getTime();
+        // suffix = suffix.toLowerCase();
+        // return {
+        //   token,
+        //   key: name + '.' + suffix
+        // };
       }
       getDetailInfo() {
         let key = this.options.key || 'code';
@@ -415,6 +419,11 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
                 ..._this.props.pageData,
                 [item.field]: [...arr, params]
               });
+              setTimeout(() => {
+                _this.setState((prevState, props) => ({
+                  o2mSKeys: { ...prevState.o2mSKeys, [item.field]: [params[key]] }
+                }));
+              }, 300);
               handleCancel();
             },
             check: true
@@ -430,7 +439,8 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
                   modalVisible: true,
                   modalOptions: {
                     ...item.options,
-                    useData: null
+                    useData: null,
+                    code: null
                   }
                 });
               }}
@@ -452,6 +462,7 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
                   modalVisible: true,
                   modalOptions: {
                     ...item.options,
+                    code: key,
                     useData
                   }
                 });
@@ -461,6 +472,23 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
               type="primary"
               disabled={!hasSelected}
               style={{marginRight: 20}}
+              onClick={() => {
+                let keys = this.state.o2mSKeys[item.field];
+                if (!keys.length || keys.length > 1) {
+                  showWarnMsg('请选择一条记录');
+                  return;
+                }
+                let key = keys[0];
+                let keyName = item.rowKey || 'code';
+                let arr = this.props.pageData[item.field].filter((v) => v[keyName] !== key);
+                this.props.setPageData({
+                  ...this.props.pageData,
+                  [item.field]: arr
+                });
+                this.setState((prevState, props) => ({
+                  o2mSKeys: { ...prevState.o2mSKeys, [item.field]: [] }
+                }));
+              }}
             >删除</Button> : null}
           </div>
         );
@@ -801,7 +829,8 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
             uid: key,
             name: key,
             status: 'done',
-            url: isImg ? formatImg(key) : formatFile(key)
+            url: isImg ? formatImg(key) : formatFile(key),
+            thumbUrl: isImg ? formatImg(key) : formatFile(key)
           }));
         }
         return initValue;

@@ -150,7 +150,7 @@ export const O2MDetailWrapper = (mapStateToProps = state => state, mapDispatchTo
         values[this.options.key || 'code'] = this.props.code || '';
         this.options.fields.forEach(v => {
           if (v.amount) {
-            values[v.field] = moneyParse(v.amount, v.amountRate);
+            values[v.field] = moneyParse(values[v.field], v.amountRate);
           } else if (v.type === 'citySelect') {
             let mid = values[v.field].map(a => a === '全部' ? '' : a);
             v.cFields.forEach((f, i) => {
@@ -244,16 +244,18 @@ export const O2MDetailWrapper = (mapStateToProps = state => state, mapDispatchTo
         }
       }
       getUploadData = (file) => {
-        const { token } = this.state;
-        let sourceLink = file.name;
-        let idx = sourceLink.lastIndexOf('.');
-        let name = sourceLink.slice(0, idx);
-        let suffix = sourceLink.slice(idx + 1);
-        name = name + '_' + new Date().getTime();
-        return {
-          token,
-          key: name + '.' + suffix
-        };
+        // const { token } = this.state;
+        return { token: this.state.token };
+        // let sourceLink = file.name;
+        // let idx = sourceLink.lastIndexOf('.');
+        // let name = sourceLink.slice(0, idx);
+        // let suffix = sourceLink.slice(idx + 1);
+        // name = name + '_' + new Date().getTime();
+        // suffix = suffix.toLowerCase();
+        // return {
+        //   token,
+        //   key: name + '.' + suffix
+        // };
       }
       getDetailInfo() {
         let key = this.options.key || 'code';
