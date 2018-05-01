@@ -1016,7 +1016,7 @@ export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToPro
           <div>
             <WrapComponent {...this.props} buildDetail={this.buildDetail}></WrapComponent>
             <ModalDetail
-              title='设置阈值'
+              title={this.state.modalOptions.title || ''}
               visible={this.state.modalVisible}
               hideModal={() => this.setState({modalVisible: false})}
               options={this.state.modalOptions}></ModalDetail>

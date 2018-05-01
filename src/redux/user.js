@@ -1,5 +1,5 @@
 import fetch from 'common/js/fetch';
-import { setUser, getUserId, setRoleInfo } from 'common/js/util';
+import { setUser, getUserId, setRoleInfo, getRoleCode, getUserName } from 'common/js/util';
 import { COMPANY_CODE } from 'common/js/config';
 
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -12,9 +12,9 @@ const initState = {
   fetching: false,
   redirectTo: '',
   msg: '',
-  userId: '',
-  userName: '',
-  roleCode: '',
+  userId: getUserId() || '',
+  loginName: getUserName() || '',
+  roleCode: getRoleCode() || '',
   kind: ''
 };
 

@@ -17,6 +17,9 @@ export function setUser({ userId, token }) {
 export function clearUser() {
   cookies.erase('userId');
   cookies.erase('token');
+  cookies.erase('roleCode');
+  cookies.erase('loginKind');
+  cookies.erase('userName');
 }
 
 // 获取用户编号
@@ -35,6 +38,11 @@ export function setRoleInfo({ roleCode, kind, level, loginName }) {
 // 获取用户角色编号
 export function getRoleCode() {
   return cookies.get('roleCode');
+}
+
+// 获取用户登录名
+export function getUserName() {
+  return cookies.get('userName');
 }
 
 /**

@@ -5,11 +5,7 @@ import { ROOT_MENU_CODE } from 'common/js/config';
 const SET_TOP_MENU_CODE = 'SET_TOP_MENU_CODE';
 const SET_SUB_MENU_CODE = 'SET_SUB_MENU_CODE';
 const SET_SUB_OPEN_CODE = 'SET_SUB_OPEN_CODE';
-const CLEAR_SUB_OPEN_CODE = 'CLEAR_SUB_OPEN_CODE';
-const RESTORE_SUB_OPEN_CODE = 'RESTORE_SUB_OPEN_CODE';
 const SET_MENU_LIST = 'SET_MENU_LIST';
-
-let preSubOpenCode = [];
 
 const initState = {
   redirectTo: '',
@@ -31,10 +27,6 @@ export function menu(state = initState, action) {
       return {...state, subMenuCode: action.payload};
     case SET_SUB_OPEN_CODE:
       return {...state, subOpenCode: getSubOpenCode(action.payload, state)};
-    case CLEAR_SUB_OPEN_CODE:
-      return {...state, subOpenCode: action.payload};
-    case RESTORE_SUB_OPEN_CODE:
-      return {...state, subOpenCode: action.payload};
     case SET_MENU_LIST:
       return {...state, ..._getMenuState(action.payload)};
     default:
@@ -52,17 +44,6 @@ export function setSubMenuCode(code) {
 
 export function setSubOpenCode(code) {
   return { type: SET_SUB_OPEN_CODE, payload: code };
-}
-
-export function clearSubOpenCode() {
-  return (dispatch, getState) => {
-    preSubOpenCode = getState().menu.subOpenCode;
-    dispatch({ type: CLEAR_SUB_OPEN_CODE, payload: [] });
-  };
-}
-
-export function restoreSubOpenCode() {
-  return { type: RESTORE_SUB_OPEN_CODE, payload: preSubOpenCode };
 }
 
 function setMenuList(data) {
@@ -99,10 +80,16 @@ function _getMenuState({ data, pathname }) {
     if (menu) {
       result.subMenuCode = menu.code;
       result.subOpenCode = [menu.parentCode];
-      result.topMenuCode = result.menus[menu.parentCode].parentCode;
+      if (result.top2SubObj[result.subOpenCode]) {
+        result.topMenuCode = menu.parentCode;
+      } else {
+        result.topMenuCode = result.menus[menu.parentCode].parentCode;
+      }
       result.subMenuList = result.top2SubObj[result.topMenuCode];
       if (!result.subMenuCode) {
-        result.subMenuCode = result.subMenuList[0].children ? result.subMenuList[0].children[0].code : '';
+        result.subMenuCode = result.subMenuList[0].children
+          ? result.subMenuList[0].children[0].code
+          : result.subMenuList[0].code;
       }
       if (!result.subOpenCode.length) {
         result.subOpenCode = [result.subMenuList[0].code];
@@ -162,7 +149,7 @@ function sortSubMenus(result) {
 function getSubCode(code, state) {
   return {
     subOpenCode: [state.top2SubObj[code][0].code],
-    subMenuCode: state.top2SubObj[code][0].children ? state.top2SubObj[code][0].children[0].code : '',
+    subMenuCode: state.top2SubObj[code][0].children ? state.top2SubObj[code][0].children[0].code : state.top2SubObj[code][0].code,
     subMenuList: state.top2SubObj[code]
   };
 }
