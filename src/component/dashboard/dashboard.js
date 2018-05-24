@@ -169,7 +169,6 @@ class Dashboard extends React.Component {
     if (!this.props.topMenuCode) {
       rightCls += ' full-right-content';
     }
-
     return (
       <Layout className="dashboard-layout">
         {this.getHeader()}

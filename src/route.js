@@ -21,27 +21,27 @@ const ROUTES = [
     path: '/public/aboutus_addedit',
     component: asyncComponent(() => import('container/public/aboutus-addedit/aboutus-addedit'))
   },
-
-  {
-    path: '/security/role',
-    component: asyncComponent(() => import('container/security/role/role'))
-  },
-  {
-    path: '/security/role/addedit',
-    component: asyncComponent(() => import('container/security/role-addedit/role-addedit'))
-  },
+//
+//   {
+//     path: '/security/role',
+//     component: asyncComponent(() => import('container/security/role/role'))
+//   },
+//   {
+//     path: '/security/role/addedit',
+//     component: asyncComponent(() => import('container/security/role-addedit/role-addedit'))
+//   },
   {
     path: '/security/role/menu',
     component: asyncComponent(() => import('container/security/role-menu/role-menu'))
   },
-  {
-    path: '/security/menu',
-    component: asyncComponent(() => import('container/security/menu/menu'))
-  },
-  {
-    path: '/security/menu/addedit',
-    component: asyncComponent(() => import('container/security/menu-addedit/menu-addedit'))
-  },
+  // {
+  //   path: '/security/menu',
+  //   component: asyncComponent(() => import('container/security/menu/menu'))
+  // },
+  // {
+  //   path: '/security/menu/addedit',
+  //   component: asyncComponent(() => import('container/security/menu-addedit/menu-addedit'))
+  // },
   {
     path: '/public/banner',
     component: asyncComponent(() => import('container/public/banner/banner'))

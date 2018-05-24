@@ -1,9 +1,3 @@
-// export const SYSTEM_CODE = 'CD-COIN000017';
-// export const COMPANY_CODE = 'CD-COIN000017';
-// export const SYSTEM_CODE = 'CD-ZXZX000018';
-// export const COMPANY_CODE = 'CD-ZXZX000018';
-// export const SYSTEM_CODE = 'CD-CXB000020';
-// export const COMPANY_CODE = 'CD-CXB000020';
 export const SYSTEM_CODE = 'CD-CBH000020';
 export const COMPANY_CODE = 'CD-CBH000020';
 // 七牛上传地址
@@ -20,9 +14,6 @@ export const SYS_USER = 'SYS_USER_ZXZX';
 export const SYS_USER_TG = 'SYS_USER_ZXZX_TG';
 
 // 系统根菜单编号
-// export const ROOT_CODE = 'COINSM201700000000000000';
-// export const ROOT_CODE = 'YLQSM201600000000000000';
-// export const ROOT_CODE = 'HYSM201700000000000000';
 export const ROOT_MENU_CODE = 'BHXTSM201700000000000000';
 
 export const formItemLayout = {
