@@ -9,7 +9,7 @@ import {
 } from '@redux/security/role-addedit';
 import { getQueryString } from 'common/js/util';
 import { DetailWrapper } from 'common/js/build-detail';
-import { COMPANY_CODE } from 'common/js/config';
+// import { COMPANY_CODE } from 'common/js/config';
 
 @DetailWrapper(
   state => state.securityRoleAddEdit,
@@ -46,9 +46,9 @@ class MenuAddEdit extends React.Component {
       fields,
       code: this.code,
       view: this.view,
-      detailCode: 805022,
-      addCode: 805023,
-      editCode: 805025
+      detailCode: 630007,
+      addCode: 630000,
+      editCode: 630002
     });
   }
 }

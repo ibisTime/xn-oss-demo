@@ -8,8 +8,7 @@ import {
   restore
 } from '@redux/public/aboutus-addedit';
 import { showSucMsg } from 'common/js/util';
-import { DetailWrapper } from 'common/js/build-detail';
-import { COMPANY_CODE } from 'common/js/config';
+import { DetailWrapper, beforeDetail } from 'common/js/build-detail';
 import fetch from 'common/js/fetch';
 
 @DetailWrapper(
@@ -33,15 +32,15 @@ class AboutusAddEdit extends React.Component {
     }];
     return this.props.buildDetail({
       fields,
-      key: 'ckey',
+      key: 'key',
       code: 'about_us',
-      detailCode: 627087,
+      detailCode: 630047,
       buttons: [{
         title: '保存',
         check: true,
         handler: (params) => {
           this.props.doFetching();
-          fetch(627081, params).then(() => {
+          fetch(630042, params).then(() => {
             showSucMsg('操作成功');
             this.props.cancelFetching();
           }).catch(this.props.cancelFetching);

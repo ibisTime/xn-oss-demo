@@ -1,7 +1,7 @@
 import cookies from 'browser-cookies';
 import { message, Modal } from 'antd';
 import { PIC_PREFIX } from './config';
-import './lib/BigDecimal';
+// import './lib/BigDecimal';
 
 /**
  * 保存用户登录信息
@@ -28,10 +28,9 @@ export function getUserId() {
 }
 
 // 设置用户角色信息
-export function setRoleInfo({ roleCode, kind, level, loginName }) {
+export function setRoleInfo({ roleCode, type, loginName }) {
   cookies.set('roleCode', roleCode);
-  cookies.set('loginKind', kind);
-  // cookies.set('roleLevel', level);
+  cookies.set('loginKind', type);
   cookies.set('userName', loginName);
 }
 
@@ -183,14 +182,14 @@ export function moneyParse(money, rate = 1000) {
  * @param a
  * @param b
  */
-export function multiply(a, b) {
-  if (a && b) {
-    let _a = new BigDecimal(a);
-    var _b = new BigDecimal(b);
-    return _a.multiply(_b).toString();
-  }
-  return '';
-}
+// export function multiply(a, b) {
+//   if (a && b) {
+//     let _a = new BigDecimal(a);
+//     var _b = new BigDecimal(b);
+//     return _a.multiply(_b).toString();
+//   }
+//   return '';
+// }
 
 /**
  * 格式化文件地址

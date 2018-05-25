@@ -6,7 +6,7 @@ import 'moment/locale/zh-cn';
 import E from 'wangeditor';
 import { getDictList } from 'api/dict';
 import { getQiniuToken } from 'api/general';
-import { formatFile, formatImg, isUndefined, dateTimeFormat, dateFormat,
+import { formatFile, formatImg, isUndefined, dateTimeFormat, dateFormat, getUserName,
   tempString, moneyFormat, moneyParse, showSucMsg, showErrMsg, showWarnMsg } from '../util';
 import { UPLOAD_URL, PIC_PREFIX, formItemLayout, tailFormItemLayout } from '../config';
 import fetch from '../fetch';
@@ -169,6 +169,7 @@ export default class DetailComp extends React.Component {
         values[v.field] = this.props.pageData[v.field];
       }
     });
+    values.updater = values.updater || getUserName();
     return values;
   }
   customSubmit = (handler) => {
@@ -565,6 +566,7 @@ export default class DetailComp extends React.Component {
       searchData: {...prevState.searchData, [key]: data}
     }));
   }
+  // 获取日期选择控件
   getDateItem(item, initVal, rules, getFieldDecorator, isTime = false) {
     let format = isTime ? DATETIME_FORMAT : DATE_FORMAT;
     let places = isTime ? '选择时间' : '选择日期';
@@ -587,6 +589,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取日期范围选择控件
   getRangeDateItem(item, initVal, rules, getFieldDecorator, isTime = false) {
     let format = isTime ? DATETIME_FORMAT : DATE_FORMAT;
     let places = isTime ? ['开始时间', '结束时间'] : ['开始日期', '结束日期'];
@@ -610,6 +613,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取搜索select控件
   getSearchSelectItem(item, initVal, rules, getFieldDecorator) {
     let data;
     if (item.readonly && item.data) {
@@ -644,6 +648,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取城市选择控件
   getCitySelect(item, initVal, rules, getFieldDecorator) {
     return (
       <FormItem key={item.field} {...formItemLayout} label={this.getLabel(item)}>
@@ -657,7 +662,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
-  // 获取经纬度
+  // 获取经纬度控件
   getLngLatComp(item, initVal, rules, getFieldDecorator) {
     return (
       <FormItem
@@ -688,6 +693,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取select控件
   getSelectComp(item, initVal, rules, getFieldDecorator) {
     let data;
     if (item.readonly && item.data) {
@@ -713,6 +719,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取input控件
   getInputComp(item, initVal, rules, getFieldDecorator) {
     return (
       <FormItem
@@ -730,6 +737,7 @@ export default class DetailComp extends React.Component {
       </FormItem>
     );
   }
+  // 获取文件上传控件
   getFileComp(item, initVal, rules, getFieldDecorator, isImg) {
     let initValue = this.getFileInitVal(initVal);
     return (
@@ -752,9 +760,11 @@ export default class DetailComp extends React.Component {
       )
     );
   }
+  // 获取图片上传控件
   getImgComp(item, initVal, rules, getFieldDecorator) {
     return this.getFileComp(item, initVal, rules, getFieldDecorator, true);
   }
+  // 获取上传控件属性
   getUploadProps(item, initValue, isImg) {
     const commProps = {
       action: UPLOAD_URL,
@@ -1029,7 +1039,7 @@ export default class DetailComp extends React.Component {
     }
     if (item.integer) {
       rules.push({
-        type: /^-?\d+$/,
+        pattern: /^-?\d+$/,
         message: '请输入合法的整数'
       });
     }

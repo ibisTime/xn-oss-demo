@@ -121,6 +121,31 @@ export default class ListComp extends React.Component {
       f.render = func;
     }
   }
+  // 获取item.dict下的数据
+  getDictList(dict, f) {
+    if (!this.getDictList[f.field]) {
+      this.getDictList[f.field] = true;
+      let fetchList = dict.map(d => {
+        return getDictList({ parentKey: d[1] });
+      });
+      Promise.all(fetchList).then(([...dictDatas]) => {
+        let list = this.props.searchData[f.field];
+        dictDatas.forEach((data, i) => {
+          this.props.searchData[f.field].forEach((s, j) => {
+            data.forEach(d => {
+              if (s[dict[i][0]] === d['dkey']) {
+                list[j][dict[i][0] + 'Name'] = d['dvalue'];
+              }
+            });
+          });
+        });
+        this.props.setSearchData({
+          key: f.field,
+          data: list
+        });
+      });
+    }
+  }
   // 导出表单
   handleExport() {
     this.props.doFetching();
@@ -305,6 +330,7 @@ export default class ListComp extends React.Component {
       let param = item.params || {};
       fetch(item.listCode, param).then(data => {
         this.props.setSearchData({ data, key: item.field });
+        item.dict && this.getDictList(item.dict, item);
       }).catch(() => {});
     }
   }

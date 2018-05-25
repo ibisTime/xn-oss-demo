@@ -9,7 +9,6 @@ import {
 } from '@redux/public/banner-addedit';
 import { getQueryString } from 'common/js/util';
 import { DetailWrapper } from 'common/js/build-detail';
-import { COMPANY_CODE } from 'common/js/config';
 
 @DetailWrapper(
   state => state.publicBannerAddEdit,
@@ -28,8 +27,8 @@ class BannerAddEdit extends React.Component {
       hidden: true
     }, {
       field: 'companyCode',
-      hidden: true,
-      value: COMPANY_CODE
+      hidden: true
+      // value: COMPANY_CODE
     }, {
       field: 'type',
       value: 2,
@@ -58,7 +57,6 @@ class BannerAddEdit extends React.Component {
       title: '位置',
       field: 'location',
       type: 'select',
-      // key: 'banner_location',
       data: [{
         dkey: 'index_banner',
         dvalue: '首页'
@@ -90,9 +88,9 @@ class BannerAddEdit extends React.Component {
       fields,
       code: this.code,
       view: this.view,
-      detailCode: 627037,
-      addCode: 627030,
-      editCode: 627032
+      detailCode: 630001,
+      addCode: 630000,
+      editCode: 630002
     });
   }
 }

@@ -8,7 +8,8 @@ import {
   restore
 } from '@redux/security/menu-addedit';
 import { getQueryString } from 'common/js/util';
-import { DetailWrapper } from 'common/js/build-detail';
+import { DetailWrapper, beforeDetail } from 'common/js/build-detail';
+// import { COMPANY_CODE } from 'common/js/config';
 
 @DetailWrapper(
   state => state.securityMenuAddEdit,
@@ -26,7 +27,7 @@ class MenuAddEdit extends React.Component {
       field: 'parentCode',
       required: true,
       type: 'select',
-      listCode: '627056',
+      listCode: '630016',
       params: { type: 1 },
       keyName: 'code',
       valueName: '{{code.DATA}} {{name.DATA}}'
@@ -59,7 +60,7 @@ class MenuAddEdit extends React.Component {
       field: 'orderNo',
       help: '数字越小，排序越靠前',
       required: true,
-      'Z+': true
+      integer: true
     }, {
       title: '备注',
       field: 'remark',
@@ -69,9 +70,9 @@ class MenuAddEdit extends React.Component {
       fields,
       code: this.code,
       view: this.view,
-      detailCode: 627057,
-      addCode: 627050,
-      editCode: 627052
+      detailCode: 630017,
+      addCode: 630010,
+      editCode: 630012
     });
   }
 }

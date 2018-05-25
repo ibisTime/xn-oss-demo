@@ -4,8 +4,7 @@ import { Form } from 'antd';
 import DetailComp from './lib/DetailComp';
 import ModalDetail from 'common/js/build-modal-detail';
 
-// export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
-export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}, WrapComponent) => {
+export const DetailWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
   return Form.create()(connect(mapStateToProps, mapDispatchToProps)(
     class DetailComponent extends DetailComp {
       render() {

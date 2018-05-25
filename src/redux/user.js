@@ -68,15 +68,13 @@ export function getUser() {
 }
 
 // 登录
-export function login({ loginName, loginPwd }) {
+export function login({ loginName, loginPwd, type = 'P' }) {
   return dispatch => {
     dispatch(doFetching());
-    // 805050
-    fetch(627300, {
+    fetch(630051, {
       loginName,
       loginPwd,
-      kind: 'P',
-      companyCode: COMPANY_CODE
+      type
     }).then(data => {
       setUser(data);
       dispatch(loginSuccess());
@@ -92,8 +90,7 @@ export function login({ loginName, loginPwd }) {
 }
 
 function _getUser() {
-  // 805121
-  return fetch(627230, {
+  return fetch(630067, {
     userId: getUserId()
   });
 }

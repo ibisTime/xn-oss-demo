@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { Form } from 'antd';
 import ListComp from './lib/ListComp';
 
-// export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
-export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}, WrapComponent) => {
+export const listWrapper = (mapStateToProps = state => state, mapDispatchToProps = {}) => (WrapComponent) => {
   return Form.create()(connect(mapStateToProps, mapDispatchToProps)(
     class ListComponent extends ListComp {
       render() {

@@ -11,6 +11,7 @@ import {
 } from '@redux/security/role';
 import { listWrapper } from 'common/js/build-list';
 import { showWarnMsg } from 'common/js/util';
+import { Button, Upload } from 'antd';
 
 @listWrapper(
   state => ({
@@ -30,15 +31,24 @@ class Role extends React.Component {
       title: '角色等级',
       field: 'level',
       type: 'select',
-      key: 'role_level',
+      data: [{
+        dkey: '1',
+        dvalue: '运维'
+      }, {
+        dkey: '2',
+        dvalue: '运营'
+      }, {
+        dkey: '3',
+        dvalue: '客户'
+      }],
       keyName: 'dkey',
       valueName: 'dvalue',
       search: true
     }, {
-      title: '更新人',
+      title: '最近更新人',
       field: 'updater'
     }, {
-      title: '更新时间',
+      title: '最近更新时间',
       field: 'updateDatetime',
       type: 'datetime'
     }, {
@@ -52,11 +62,11 @@ class Role extends React.Component {
         } else if (selectedRowKeys.length > 1) {
           showWarnMsg('请选择一条记录');
         } else {
-          this.props.history.push(`/security/role/menu?code=${selectedRowKeys[0]}&name=${selectedRows[0].name}`);
+          this.props.history.push(`/system/role/menu?code=${selectedRowKeys[0]}&name=${selectedRows[0].name}`);
         }
       }
     };
-    return this.props.buildList({ fields, btnEvent, pageCode: 627045, deleteCode: 627042 });
+    return this.props.buildList({ fields, btnEvent, pageCode: 630005, deleteCode: 630001 });
   }
 }
 

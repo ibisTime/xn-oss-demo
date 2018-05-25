@@ -10,7 +10,6 @@ import {
   setSearchData
 } from '@redux/public/banner';
 import { listWrapper } from 'common/js/build-list';
-import { COMPANY_CODE } from 'common/js/config';
 
 @listWrapper(
   state => ({
@@ -23,9 +22,12 @@ import { COMPANY_CODE } from 'common/js/config';
 class Banner extends React.Component {
   render() {
     const fields = [{
-      title: 'banner名称',
+      title: '名称',
       field: 'name',
       search: true
+    }, {
+      title: '图片',
+      field: ''
     }, {
       title: '位置',
       field: 'location',
@@ -45,10 +47,9 @@ class Banner extends React.Component {
     }];
     return this.props.buildList({
       fields,
-      pageCode: 627035,
-      deleteCode: 627031,
+      pageCode: 630005,
+      deleteCode: 630011,
       searchParams: {
-        companyCode: COMPANY_CODE,
         type: 2
       }
     });
